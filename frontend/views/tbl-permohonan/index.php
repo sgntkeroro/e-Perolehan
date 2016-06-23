@@ -4,66 +4,108 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\db\Query;
 use yii\db\Command;
+use yii\helpers\ArrayHelper;
+use kartik\date\DatePicker;
 
-    $query = new Query;
-    $query ->select([
-    'tbl_unit.unit_nama as unit'
-    ])
-    ->from('tbl_unit')
-    ->innerJoin('tbl_bhgnmod','tbl_unit.unit_id=tbl_bhgnmod.unit_id')
-    ->innerJoin('tbl_moderator','tbl_bhgnmod.bm_id=tbl_moderator.bm_id')
-    ->where('tbl_unit.unit_id=tbl_bhgnmod.unit_id')
-    ->andWhere('tbl_moderator.user_id= "'.Yii::$app->user->identity->id.'"'); 
-
-    $command=$query->createCommand();
-    $data=$command->queryAll();
+use frontend\models\TblStatmohon;
+use frontend\models\TblStatus;
+use frontend\models\TblPermohonan;
 
 $this->title = 'Senarai Permohonan';
-$this->params['breadcrumbs'][] = $this->title;
+
+$permohonan = TblPermohonan::find()->where(['user_id' => Yii::$app->user->identity->id])->andWhere(['status_id' => 2])->all();
+
+// $moderator = TblModerator::find()->where(['user_id' => Yii::$app->user->identity->id])->one();
+// $bm = TblBhgnmod::find()->where(['bm_id' => $moderator->bm_id])->one();
+// $bhgn = TblBahagian::find()->where(['bahagian_id' => $bm->bahagian_id])->one();
+// $unit = TblUnit::find()->where(['unit_id' => $bm->unit_id])->one();
+$nombor = 1;
 ?>
+
 <div class="tbl-permohonan-index" >
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <div class="btn-group btn-group-justified" role="group" aria-label="...">
-        <div class="btn-group" role="group">
-            <?= Html::a('<span class="glyphicon glyphicon-home" aria-hidden="true"> HOME</span>', ['//site/index'], ['class' => 'btn btn-info']) ?>
+    <div class = "panel panel-primary">
+        <div class = "panel-heading" style = "text-align:center">
+            <?= Html::a('<span class="glyphicon glyphicon-home" aria-hidden="true"></span>', ['/site/index'], [
+                'class' => 'btn btn-info',
+                'data-toggle'=>'tooltip', 
+                'title'=>'HOME'
+            ]); ?>
         </div>
-        <div class="btn-group" role="group">
-            <?= Html::a('<span class="glyphicon glyphicon-envelope" aria-hidden="true"> PERMOHONAN</span>', ['//tbl-permohonan/index'], ['class' => 'btn btn-primary']) ?>
-        </div>
-        <div class="btn-group" role="group">
-            <?= Html::a('<span class="glyphicon glyphicon-user" aria-hidden="true"> PROFIL PENGGUNA</span>', ['//tbl-moderator/index'], ['class' => 'btn btn-info']) ?>
-        </div>
-    </div><br><br>
+        <div class = "panel-body" align="center">
+            <br>
+            <p style = "text-align:center"><h4><b>SENARAI PERMOHONAN YANG AKTIF</b></h4></p>
+            <br>
+            <?= GridView::widget([
+                'dataProvider' => $dataProvider,
+                'filterModel' => $searchModel,
+                'columns' => [
+                    'permohonan_id',
+                    [
+                        'label' => 'Tarikh',
+                        'attribute' => 'permohonan_tarikh',
+                        'value' => 'permohonan_tarikh',
+                        'format' => 'raw',
+                        'filter' => DatePicker::widget([
+                            'model' => $searchModel,
+                            'attribute' => 'permohonan_tarikh',
+                            'options' => ['placeholder' => 'pilih tarikh permohonan'],
+                            'pluginOptions' => [
+                                'format' => 'yyyy-mm-dd',
+                                'autoclose'=>true
+                            ]
+                        ]),
+                    ],
+                    //'permohonan_tarikh',
+                    'permohonan_pusatKos',
+                    [
+                        'label' => 'Status Permohonan',
+                        'attribute' => 'statMohon_id',
+                        'value' => 'statMohon.statMohon_status',
+                        'filter' => Html::activeDropDownList($searchModel, 'statMohon_id', ArrayHelper::map(TblStatmohon::find()->asArray()->all(), 'statMohon_id', 'statMohon_status'),['class'=>'form-control','prompt' => 'Sila Pilih']),
+                    ],
+                    [
+                        'label' => 'Status',
+                        'attribute' => 'status_id',
+                        'value' => 'status.status_status',
+                        'filter' => Html::activeDropDownList($searchModel, 'status_id', ArrayHelper::map(TblStatus::find()->asArray()->all(), 'status_id', 'status_status'),['class'=>'form-control','prompt' => 'Sila Pilih']),
+                    ],
 
-    <p style="font-size:20px" align=center>
-        <b>
-            <br>Senarai Permohonan  
-            <?php foreach ($data as $bahagian): ?>
-                <?= $bahagian['unit'] ?>
-            <?php endforeach; ?>
-        </b>        
-        <br><br><?= Html::a('Permohonan Baru', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            'permohonan_id',
-            'permohonan_tarikh',
-            'permohonan_pusatKos',
-            [
-                'label' => 'Status Permohonan',
-                'attribute' => 'statMohon_id',
-                'value' => 'statMohon.statMohon_status',
-            ],
-            [
-                'label' => 'Dekan / PTJ',
-                'attribute' => 'dekan_id',
-                'value' => 'dekan.dekan_nama',
-            ],
+                    ['class' => 'yii\grid\ActionColumn'],
+                ],
+            ]); ?>
 
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
+            <hr>
+            <br>
+            <p style = "text-align:center"><h4><b>SENARAI PERMOHONAN YANG SELESAI (TIDAK AKTIF)</b></h4></p>
+            <br><br>
+
+            <table class = "table table-bordered table-hover">
+                <thead style = "background-color:grey">
+                    <th>Bil.</th>
+                    <th>Permohonan ID</th>
+                    <th>Tarikh</th>
+                    <th>Pusat Kos</th>
+                    <th></th>
+                </thead>
+                <tbody>
+                    <?php $nombor = $nombor; foreach ($permohonan as $permohonan): ?>
+                    <tr>
+                        <td><?= $nombor++ ?></td>
+                        <td><?= $permohonan['permohonan_id'] ?></td>
+                        <td><?= $permohonan['permohonan_tarikh'] ?></td>
+                        <td><?= $permohonan['permohonan_pusatKos'] ?></td>
+                        <td style = "text-align:center">
+                            <?= Html::a('<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>', 
+                            ['viewselesai', 'id' => $permohonan->permohonan_id]) ?>
+                    </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    
 </div>

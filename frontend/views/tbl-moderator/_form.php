@@ -56,7 +56,7 @@ use frontend\models\TblUnit;
                 ) ?>
             </div>
             <div class='col-lg-4'>
-                <?= $form->field($modelsBahagian, 'unitKC_id')->textInput() ?>
+                <?= $form->field($modelsBahagian, 'unit_kampuscawangan')->textInput() ?>
             </div>
         </div>
     </div>

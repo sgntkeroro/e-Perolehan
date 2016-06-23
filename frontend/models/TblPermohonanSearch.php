@@ -12,6 +12,8 @@ use frontend\models\TblPermohonan;
  */
 class TblPermohonanSearch extends TblPermohonan
 {
+    public $globalSearch;
+
     /**
      * @inheritdoc
      */
@@ -19,7 +21,7 @@ class TblPermohonanSearch extends TblPermohonan
     {
         return [
             [['permohonan_id', 'user_id', 'statMohon_id', 'dekan_id', 'status_id'], 'integer'],
-            [['permohonan_tarikh', 'permohonan_pusatKos'], 'safe'],
+            [['permohonan_tarikh', 'globalSearch', 'permohonan_pusatKos'], 'safe'],
         ];
     }
 
@@ -41,7 +43,29 @@ class TblPermohonanSearch extends TblPermohonan
      */
     public function search($params)
     {
-        $query = TblPermohonan::find();
+        $role = Yii::$app->user->identity->role_id;
+            
+        switch($role){
+            case '1' :
+            $query = TblPermohonan::find()
+            ->where(['user_id' => Yii::$app->user->identity->id])
+            ->andWhere(['status_id' => 1]);
+            break;
+
+            case '2':
+            $query = TblPermohonan::find()->where(['dekan_id' => Yii::$app->user->identity->id]);
+            break;
+
+            case '3' :
+            $query = TblPermohonan::find();
+            break;
+
+            case '4':
+            $query = TblPermohonan::find();
+            break;
+        }
+        
+        // $query = TblPermohonan::find()->where(['user_id' => Yii::$app->user->identity->id]);
 
         // add conditions that should always apply here
 
@@ -57,6 +81,9 @@ class TblPermohonanSearch extends TblPermohonan
             return $dataProvider;
         }
 
+        //$query->joinWith('statMohon');
+        //$query->joinWith('status');
+
         // grid filtering conditions
         $query->andFilterWhere([
             'permohonan_id' => $this->permohonan_id,
@@ -68,6 +95,8 @@ class TblPermohonanSearch extends TblPermohonan
         ]);
 
         $query->andFilterWhere(['like', 'permohonan_pusatKos', $this->permohonan_pusatKos]);
+        //->andFilterWhere(['like', 'tbl_statmohon.statMohon_status', $this->statMohon_id])
+        //->andFilterWhere(['like', 'tbl_status.status_status', $this->status_id]);
 
         return $dataProvider;
     }

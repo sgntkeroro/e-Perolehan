@@ -10,29 +10,26 @@ use frontend\models\TblRole;
 use yii\helpers\ArrayHelper;
 
 $this->title = 'Signup';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="site-signup">
-    <h1><?= Html::encode($this->title) ?></h1>
+<div class="site-signup" align = "center">
+    <div class="panel panel-default" style = "width:500px; text-align:center">
+        <div class="panel-heading" style = "background-color:#1E1E1E;"><h3><b><font color = "white">Daftar Pengguna</font></b></h3></div>
+        <div class="panel-body">
 
-    <p>Please fill out the following fields to signup:</p>
+            <p><b><font color = "crimson">* Sila isi semua butiran dibawah *</font></b></p><br>
 
-    <div class="row">
-        <div class="col-lg-5">
             <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
 
-                <?= $form->field($model, 'username') ?>
+                <?= $form->field($model, 'username')->textInput(['style' => 'text-align:center']) ?>
 
-                <?= $form->field($model, 'email') ?>
+                <?= $form->field($model, 'email')->textInput(['style' => 'text-align:center']) ?>
 
-                <?= $form->field($model, 'password')->passwordInput() ?>
-
-                <?= $form->field($model, 'role_id')->dropDownList(
-                                    ArrayHelper::map(TblRole::find()->all(),'role_id','role_name')
-                                ) ?>
+                <?= $form->field($model, 'password')->passwordInput(['style' => 'text-align:center']) ?>
+            
+                <?= $form->field($model, 'role_id')->textInput(['value'=>1, 'style' => 'text-align:center', 'readonly' => true]) ?>
 
                 <div class="form-group">
-                    <?= Html::submitButton('Signup', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+                    <?= Html::submitButton('H A N T A R', ['class' => 'btn btn-lg  btn-block', 'style' => 'background-color:#1E1E1E; color:white;', 'name' => 'signup-button']) ?>
                 </div>
 
             <?php ActiveForm::end(); ?>

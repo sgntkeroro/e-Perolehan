@@ -18,8 +18,8 @@ class TblPeralatanSearch extends TblPeralatan
     public function rules()
     {
         return [
-            [['alat_id', 'permohonan_id', 'alat_kuantiti', 'jk_id', 'katPelanggan_id', 'katPermohonan_id', 'tahunSedia_id', 'bukuLog_id', 'deleteBukuLog', 'sort_order'], 'integer'],
-            [['alat_nama', 'alat_kodAkaun', 'alat_tujuan', 'alat_jenisPeruntukan', 'alat_programBaru', 'alat_tahap', 'alat_pegawai', 'alat_jawatan', 'alat_lokasi', 'alat_bukuLog'], 'safe'],
+            [['alat_id', 'permohonan_id', 'alat_kuantiti', 'jk_id', 'katPelanggan_id', 'katPermohonan_id', 'tahunSedia_id', 'jen_id'], 'integer'],
+            [['alat_nama', 'alat_kodAkaun', 'alat_tujuan', 'alat_programBaru', 'alat_tahap', 'alat_pegawai', 'alat_jawatan', 'alat_lokasi'], 'safe'],
             [['alat_hargaUnit', 'alat_jumlahHarga'], 'number'],
         ];
     }
@@ -69,21 +69,18 @@ class TblPeralatanSearch extends TblPeralatan
             'katPelanggan_id' => $this->katPelanggan_id,
             'katPermohonan_id' => $this->katPermohonan_id,
             'tahunSedia_id' => $this->tahunSedia_id,
-            'bukuLog_id' => $this->bukuLog_id,
-            'deleteBukuLog' => $this->deleteBukuLog,
-            'sort_order' => $this->sort_order,
+            'jen_id' => $this->jen_id,
+
         ]);
 
         $query->andFilterWhere(['like', 'alat_nama', $this->alat_nama])
             ->andFilterWhere(['like', 'alat_kodAkaun', $this->alat_kodAkaun])
             ->andFilterWhere(['like', 'alat_tujuan', $this->alat_tujuan])
-            ->andFilterWhere(['like', 'alat_jenisPeruntukan', $this->alat_jenisPeruntukan])
             ->andFilterWhere(['like', 'alat_programBaru', $this->alat_programBaru])
             ->andFilterWhere(['like', 'alat_tahap', $this->alat_tahap])
             ->andFilterWhere(['like', 'alat_pegawai', $this->alat_pegawai])
             ->andFilterWhere(['like', 'alat_jawatan', $this->alat_jawatan])
-            ->andFilterWhere(['like', 'alat_lokasi', $this->alat_lokasi])
-            ->andFilterWhere(['like', 'alat_bukuLog', $this->alat_bukuLog]);
+            ->andFilterWhere(['like', 'alat_lokasi', $this->alat_lokasi]);
 
         return $dataProvider;
     }

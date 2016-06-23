@@ -18,6 +18,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\JsonParser;
 use yii\web\UploadedFile;
+use yii\web\Response;
 
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
@@ -110,13 +111,49 @@ class TblPermohonanController extends Controller
         ]);
     }
 
-    /**
-     * Displays a single TblPermohonan model.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionView($id)
-    {
+    public function actionList($id)
+    {      
+        $surat = TblSuratpengesahan::find()->where(['suratSah_id' => $id])->one();
+
+        $url = 'http://localhost/e-Perolehan/frontend/web/uploads/'.$surat->suratSah_nama;
+        // Yii::app()->createUrl('/uploads');
+
+        // $mPDF = Yii::app()->ePdf->mpdf();
+        // $mPDF->WriteHTML($this->render('list', array(), true));
+        // $mPDF->Output();
+        return $this->redirect($url);
+    }
+
+    public function actionStatus($id)
+    {    
+        $model = $this->findModel($id);  
+        // $status = $model->tblMesyuaratpermohonans;
+        $status = TblMesyuaratpermohonan::find()
+        // ->innerjoin
+        ->where(['permohonan_id' => $id])->one();
+
+        return $this->render('status' ,[
+            'model'=>$model,
+            'status'=>$status,
+            ]);
+    }
+
+    public function actionStatusselesai($id)
+    {    
+        $model = $this->findModel($id);  
+        // $status = $model->tblMesyuaratpermohonans;
+        // $status = TblMesyuaratpermohonan::find()
+        // ->join('INNER JOIN','tbl_statmesyua', 'statMesyua_id=tbl_statmesyua.statMesyua_id')
+        // ->where(['permohonan_id' => $id])->one();
+
+        return $this->render('statusselesai' ,[
+            'model'=>$model,
+            // 'status'=>$status,
+            ]);
+    }
+
+    public function actionViewselesai($id)
+    {      
         $model = $this->findModel($id);
 
         $query = new Query;
@@ -130,21 +167,22 @@ class TblPermohonanController extends Controller
             'tbl_peralatan.katPelanggan_id as katPelanggan_id',
             'tbl_peralatan.alat_tujuan as alat_tujuan',
             'tbl_peralatan.katPermohonan_id as katPermohonan_id',
-            'tbl_peralatan.alat_jenisPeruntukan as alat_jenisPeruntukan',
+            'tbl_peralatan.jen_id as jen_id',
             'tbl_peralatan.alat_programBaru as alat_programBaru',
             'tbl_peralatan.alat_tahap as alat_tahap',
             'tbl_peralatan.tahunSedia_id as tahunSedia_id',
             'tbl_peralatan.alat_pegawai as alat_pegawai',
             'tbl_peralatan.alat_jawatan as alat_jawatan',
             'tbl_peralatan.alat_lokasi as alat_lokasi',
-            'tbl_peralatan.alat_bukuLog as alat_bukuLog',
 
-            'tbl_tahun.tahun_tahun as tahun_tahun'
+            'tbl_tahun.tahun_tahun as tahun_tahun',
+            'tbl_jenisperuntukan.jen_nama as jen_nama'
             ])
-            ->from('tbl_peralatan, tbl_permohonan, tbl_tahun')
+            ->from('tbl_peralatan, tbl_permohonan, tbl_tahun, tbl_jenisperuntukan')
 
             ->where('tbl_permohonan.permohonan_id = "'.$id.'"')           
-            ->andWhere('tbl_tahun.tahun_id = tbl_peralatan.tahunSedia_id')
+            ->andWhere('tbl_tahun.tahun_id = tbl_peralatan.tahunSedia_id')           
+            ->andWhere('tbl_jenisperuntukan.jen_id = tbl_peralatan.jen_id')
             ->andWhere('tbl_peralatan.permohonan_id = tbl_permohonan.permohonan_id');
 
         $command=$query->createCommand();
@@ -156,16 +194,13 @@ class TblPermohonanController extends Controller
 
             'tbl_statmohon.statMohon_status as statMohon_status',
 
-            'tbl_dekan.dekan_nama as dekan_nama',
-
             'tbl_status.status_status as status_status'
             ])
-            ->from('tbl_permohonan, tbl_moderator, tbl_statmohon, tbl_dekan, tbl_status')
+            ->from('tbl_permohonan, tbl_moderator, tbl_statmohon, tbl_status')
 
             ->where('tbl_permohonan.permohonan_id = "'.$id.'"')         
             ->andWhere('tbl_moderator.user_id = tbl_permohonan.user_id')           
-            ->andWhere('tbl_statmohon.statMohon_id = tbl_permohonan.statMohon_id')           
-            ->andWhere('tbl_dekan.dekan_id = tbl_permohonan.dekan_id')           
+            ->andWhere('tbl_statmohon.statMohon_id = tbl_permohonan.statMohon_id')        
             ->andWhere('tbl_status.status_id = tbl_permohonan.status_id');
 
         $command=$queryAtas->createCommand();
@@ -173,6 +208,8 @@ class TblPermohonanController extends Controller
 
         $queryStatus = new Query;
         $queryStatus ->select([
+            'tbl_permohonan.permohonan_id as permohonan_id',
+
             'tbl_statsah.statSah_nama as statSah_nama',
 
             'tbl_statmohon.statMohon_status as statMohon_status',
@@ -195,26 +232,111 @@ class TblPermohonanController extends Controller
         $command=$queryStatus->createCommand();
         $viewStatus=$command->queryAll();
 
-        $querySurat = new Query;
-        $querySurat ->select([
-            'tbl_suratpengesahan.permohonan_id as permohonan_id',
-            'tbl_suratpengesahan.suratSah_nama as suratSah_nama',
-            'tbl_suratpengesahan.suratSah_tarikh as suratSah_tarikh',
-            'tbl_suratpengesahan.suratSah_deskripsi as suratSah_deskripsi'
-            ])
-            ->from('tbl_suratpengesahan, tbl_permohonan')
+        $suratSah = $model->tblSuratpengesahans;
 
-            ->where('tbl_permohonan.permohonan_id = "'.$id.'"')         
-            ->andWhere('tbl_suratpengesahan.permohonan_id = tbl_permohonan.permohonan_id');
-
-        $command=$querySurat->createCommand();
-        $viewSurat=$command->queryAll();
-
-        return  $this->render('view' ,[
+        return $this->render('viewselesai' ,[
             'view'=>$data,
             'viewAtas'=>$viewAtas,
             'viewStatus'=>$viewStatus,
-            'viewSurat'=>$viewSurat,
+            // 'viewSurat'=>$viewSurat,
+            'suratSah'=>$suratSah,
+            'model' => $this->findModel($id),
+            ]);
+    }
+
+    /**
+     * Displays a single TblPermohonan model.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionView($id)
+    {
+        $model = $this->findModel($id);
+
+        $query = new Query;
+        $query ->select([
+            'tbl_peralatan.alat_nama as alat_nama',
+            'tbl_peralatan.alat_kodAkaun as alat_kodAkaun',
+            'tbl_peralatan.alat_kuantiti as alat_kuantiti',
+            'tbl_peralatan.alat_hargaUnit as alat_hargaUnit',
+            'tbl_peralatan.alat_jumlahHarga as alat_jumlahHarga',
+            'tbl_peralatan.jk_id as jk_id',
+            'tbl_peralatan.katPelanggan_id as katPelanggan_id',
+            'tbl_peralatan.alat_tujuan as alat_tujuan',
+            'tbl_peralatan.katPermohonan_id as katPermohonan_id',
+            'tbl_peralatan.jen_id as jen_id',
+            'tbl_peralatan.alat_programBaru as alat_programBaru',
+            'tbl_peralatan.alat_tahap as alat_tahap',
+            'tbl_peralatan.tahunSedia_id as tahunSedia_id',
+            'tbl_peralatan.alat_pegawai as alat_pegawai',
+            'tbl_peralatan.alat_jawatan as alat_jawatan',
+            'tbl_peralatan.alat_lokasi as alat_lokasi',
+
+            'tbl_tahun.tahun_tahun as tahun_tahun',
+            'tbl_jenisperuntukan.jen_nama as jen_nama'
+            ])
+            ->from('tbl_peralatan, tbl_permohonan, tbl_tahun, tbl_jenisperuntukan')
+
+            ->where('tbl_permohonan.permohonan_id = "'.$id.'"')           
+            ->andWhere('tbl_tahun.tahun_id = tbl_peralatan.tahunSedia_id')           
+            ->andWhere('tbl_jenisperuntukan.jen_id = tbl_peralatan.jen_id')
+            ->andWhere('tbl_peralatan.permohonan_id = tbl_permohonan.permohonan_id');
+
+        $command=$query->createCommand();
+        $data=$command->queryAll();
+
+        $queryAtas = new Query;
+        $queryAtas ->select([
+            'tbl_moderator.mod_nama as mod_nama',
+
+            'tbl_statmohon.statMohon_status as statMohon_status',
+
+            'tbl_status.status_status as status_status'
+            ])
+            ->from('tbl_permohonan, tbl_moderator, tbl_statmohon, tbl_status')
+
+            ->where('tbl_permohonan.permohonan_id = "'.$id.'"')         
+            ->andWhere('tbl_moderator.user_id = tbl_permohonan.user_id')           
+            ->andWhere('tbl_statmohon.statMohon_id = tbl_permohonan.statMohon_id')        
+            ->andWhere('tbl_status.status_id = tbl_permohonan.status_id');
+
+        $command=$queryAtas->createCommand();
+        $viewAtas=$command->queryAll();
+
+        $queryStatus = new Query;
+        $queryStatus ->select([
+            'tbl_permohonan.permohonan_id as permohonan_id',
+
+            'tbl_statsah.statSah_nama as statSah_nama',
+
+            'tbl_statmohon.statMohon_status as statMohon_status',
+
+            'tbl_statmesyua.statMesyua_status as statMesyua_status',
+
+            'tbl_status.status_status as status_status'
+            ])
+            ->from('tbl_statsah, tbl_statmohon, tbl_statmesyua, tbl_status, tbl_permohonan, tbl_pengesahan, tbl_mesyuaratpermohonan')
+
+            ->where('tbl_permohonan.permohonan_id = "'.$id.'"')         
+            ->andWhere('tbl_pengesahan.permohonan_id = tbl_permohonan.permohonan_id')         
+            ->andWhere('tbl_mesyuaratpermohonan.permohonan_id = tbl_permohonan.permohonan_id')
+
+            ->andWhere('tbl_mesyuaratpermohonan.statMesyua_id = tbl_statmesyua.statMesyua_id')         
+            ->andWhere('tbl_pengesahan.statSah_id = tbl_statsah.statSah_id')           
+            ->andWhere('tbl_statmohon.statMohon_id = tbl_permohonan.statMohon_id')         
+            ->andWhere('tbl_status.status_id = tbl_permohonan.status_id');
+
+        $command=$queryStatus->createCommand();
+        $viewStatus=$command->queryAll();
+
+        $suratSah = $model->tblSuratpengesahans;
+
+        return $this->render('view' ,[
+            'view'=>$data,
+            'viewAtas'=>$viewAtas,
+            'viewStatus'=>$viewStatus,
+            // 'viewSurat'=>$viewSurat,
+            'suratSah'=>$suratSah,
             'model' => $this->findModel($id),
             ]);
     }
@@ -235,7 +357,6 @@ class TblPermohonanController extends Controller
             'tbl_peralatan.katPelanggan_id as katPelanggan_id',
             'tbl_peralatan.alat_tujuan as alat_tujuan',
             'tbl_peralatan.katPermohonan_id as katPermohonan_id',
-            'tbl_peralatan.alat_jenisPeruntukan as alat_jenisPeruntukan',
             'tbl_peralatan.alat_programBaru as alat_programBaru',
             'tbl_peralatan.alat_tahap as alat_tahap',
             'tbl_peralatan.tahunSedia_id as tahunSedia_id',
@@ -244,11 +365,13 @@ class TblPermohonanController extends Controller
             'tbl_peralatan.alat_lokasi as alat_lokasi',
             // 'count(alat_id) as count',
 
-            'tbl_tahun.tahun_tahun as tahun_tahun'
+            'tbl_tahun.tahun_tahun as tahun_tahun',
+            'tbl_jenisperuntukan.jen_nama as jen_nama'
         ])
-       ->from('tbl_peralatan, tbl_tahun')
+       ->from('tbl_peralatan, tbl_tahun, tbl_jenisperuntukan')
 
-       ->where('tbl_peralatan.tahunSedia_id = tbl_tahun.tahun_id')
+       ->where('tbl_peralatan.tahunSedia_id = tbl_tahun.tahun_id')           
+        ->andWhere('tbl_jenisperuntukan.jen_id = tbl_peralatan.jen_id')
        ->andWhere('tbl_peralatan.permohonan_id = "'.$id.'"');
 
        $command=$alat->createCommand();
@@ -310,7 +433,6 @@ class TblPermohonanController extends Controller
                         foreach ($modelsPeralatan as $index => $modelPeralatan) {
                             $modelPeralatan->permohonan_id = $model->permohonan_id;
                             $modelPeralatan->alat_jumlahHarga = ($modelPeralatan->alat_kuantiti * $modelPeralatan->alat_hargaUnit);
-                            $modelPeralatan->alat_bukuLog = \yii\web\UploadedFile::getInstance($modelPeralatan, "[{$index}]alat_bukuLog");
 
                             if (($flag = $modelPeralatan->save(false)) === false) {
                                 $transaction->rollBack();
@@ -404,11 +526,6 @@ class TblPermohonanController extends Controller
             Model::loadMultiple($modelsPeralatan, Yii::$app->request->post());
             $deletedIDs = array_diff($oldIDs, array_filter(ArrayHelper::map($modelsPeralatan, 'alat_id', 'alat_id')));
 
-            // foreach ($modelsPeralatan as $index => $modelPeralatan) {
-            //     $modelPeralatan->sort_order = $index;
-            //     $modelPeralatan->alat_bukuLog = \yii\web\UploadedFile::getInstance($modelPeralatan, "[{$index}]alat_bukuLog");
-            // }
-
             // validate all models
             $valid = $model->validate();
             $valid = Model::validateMultiple($modelsPeralatan) && $valid;
@@ -462,7 +579,6 @@ class TblPermohonanController extends Controller
 
                             $modelPeralatan->permohonan_id = $model->permohonan_id;
                             $modelPeralatan->alat_jumlahHarga = ($modelPeralatan->alat_kuantiti * $modelPeralatan->alat_hargaUnit);
-                            $modelPeralatan->alat_bukuLog = \yii\web\UploadedFile::getInstance($modelPeralatan, "[{$index}]alat_bukuLog");
 
                             if (!($flag = $modelPeralatan->save(false))) {
                                 break;

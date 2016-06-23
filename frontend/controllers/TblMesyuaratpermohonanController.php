@@ -8,6 +8,8 @@ use frontend\models\Model;
 use frontend\models\TblMesyuaratpermohonan;
 use frontend\models\TblMesyuaratpermohonanSearch;
 use frontend\models\TblMesyuaratperalatan;
+use frontend\models\TblStatmesyua;
+use frontend\models\TblPermohonan;
 
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -20,6 +22,7 @@ use yii\db\Query;
 use yii\db\Command;
 
 use kartik\mpdf\Pdf;
+use yii\data\SqlDataProvider;
 
 /**
  * TblMesyuaratpermohonanController implements the CRUD actions for TblMesyuaratpermohonan model.
@@ -57,46 +60,118 @@ class TblMesyuaratpermohonanController extends Controller
     }
 
     /**
+     * Lists all TblMesyuaratpermohonan models.
+     * @return mixed
+     */
+    public function actionAnalisa()
+    {
+        $sql =  "SELECT 
+                tbl_permohonan.permohonan_id As permohonan_id, 
+                user.id As id, 
+                tbl_moderator.bm_id As bm_id, 
+                tbl_bhgnmod.unit_kampuscawangan As unit_kampuscawangan, 
+                tbl_bahagian.bahagian_nama As bahagian_nama, 
+                tbl_unit.unit_nama As unit_nama
+
+                FROM tbl_permohonan
+
+                INNER JOIN user 
+                ON tbl_permohonan.user_id=user.id
+
+                INNER JOIN tbl_moderator 
+                ON user.id=tbl_moderator.user_id
+
+                INNER JOIN tbl_bhgnmod 
+                ON tbl_moderator.bm_id=tbl_bhgnmod.bm_id
+
+                INNER JOIN tbl_bahagian
+                ON tbl_bhgnmod.bahagian_id=tbl_bahagian.bahagian_id
+
+                INNER JOIN tbl_unit 
+                ON tbl_bhgnmod.unit_id=tbl_unit.unit_id";
+
+        $dataProvider = new SqlDataProvider([
+            'sql' => $sql,
+            ]);
+
+        // // grid filtering conditions
+        // $sql->andFilterWhere([
+        //     'permohonan_id' => $this->permohonan_id,
+        //     'id' => $this->id,
+        //     'bm_id' => $this->bm_id,
+        // ]);
+
+        // $sql->andFilterWhere(['like', 'unit_kampuscawangan', $this->unit_kampuscawangan])
+        //     ->andFilterWhere(['like', 'bahagian_nama', $this->bahagian_nama])
+        //     ->andFilterWhere(['like', 'unit_nama', $this->unit_nama]);
+
+        // $searchModel = $sql->search();        
+        // $dataProvider = $searchModel->search();
+
+        return $this->render('analisis', [
+            // 'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
      * Displays a single TblMesyuaratpermohonan model.
      * @param integer $id
      * @return mixed
      */
     public function actionView($id)
     {
-        $query = new Query;
-        $query ->select([
+        $model = $this->findModel($id);
+        $statusMesyuarat = $model->statMesyua;
+
+        $alat = new Query;
+        $alat ->select([
             'tbl_peralatan.alat_nama as alat_nama',
-            'tbl_peralatan.alat_kodAkaun as alat_kodAkaun',
             'tbl_peralatan.alat_kuantiti as alat_kuantiti',
             'tbl_peralatan.alat_hargaUnit as alat_hargaUnit',
             'tbl_peralatan.alat_jumlahHarga as alat_jumlahHarga',
-            'tbl_peralatan.jk_id as jk_id',
-            'tbl_peralatan.katPelanggan_id as katPelanggan_id',
-            'tbl_peralatan.alat_tujuan as alat_tujuan',
-            'tbl_peralatan.katPermohonan_id as katPermohonan_id',
-            'tbl_peralatan.alat_jenisPeruntukan as alat_jenisPeruntukan',
-            'tbl_peralatan.alat_programBaru as alat_programBaru',
-            'tbl_peralatan.alat_tahap as alat_tahap',
-            'tbl_peralatan.tahunSedia_id as tahunSedia_id',
-            'tbl_peralatan.alat_pegawai as alat_pegawai',
-            'tbl_peralatan.alat_jawatan as alat_jawatan',
-            'tbl_peralatan.alat_lokasi as alat_lokasi',
-            'tbl_peralatan.alat_bukuLog as alat_bukuLog',
 
-            'tbl_tahun.tahun_tahun as tahun_tahun'
-            ])
-            ->from('tbl_peralatan, tbl_permohonan, tbl_tahun')
+            'tbl_mesyuaratperalatan.mesy_kuantiti as mesy_kuantiti',
+            'tbl_mesyuaratperalatan.mesy_jumlahHarga as mesy_jumlahHarga',
+            'tbl_mesyuaratperalatan.mesy_catitan as mesy_catitan'
+        ])
+        ->from('tbl_peralatan, tbl_mesyuaratperalatan')
 
-            ->where('tbl_permohonan.permohonan_id = "'.$id.'"')           
-            ->andWhere('tbl_tahun.tahun_id = tbl_peralatan.tahunSedia_id')
-            ->andWhere('tbl_peralatan.permohonan_id = tbl_permohonan.permohonan_id');
+        // ->innerJoin('tbl_mesyuaratpermohonan, tbl_mesyuaratpermohonan.mesyPerm_id')
+
+        ->where('tbl_peralatan.permohonan_id = "'.$id.'"')
+        ->andWhere('tbl_mesyuaratperalatan.alat_id = tbl_peralatan.alat_id');
+
+        $command=$alat->createCommand();
+        $dataAlat=$command->queryAll();
+
+        $sumPermohonan = $alat->sum('alat_jumlahHarga');
+        $sumMesyuarat = $alat->sum('mesy_jumlahHarga');
+
+        $query = new Query;
+        $query ->select([
+        'tbl_unit.unit_nama as unit',
+        'tbl_permohonan.permohonan_pusatKos as permohonan_pusatKos'
+        ])
+        ->from('tbl_unit, tbl_bhgnmod, tbl_moderator, tbl_permohonan, tbl_mesyuaratpermohonan')
+
+        ->where('tbl_unit.unit_id = tbl_bhgnmod.unit_id')
+        ->andWhere('tbl_bhgnmod.bm_id = tbl_moderator.bm_id')
+        ->andWhere('tbl_moderator.user_id = tbl_permohonan.user_id')
+        ->andWhere('tbl_permohonan.permohonan_id = tbl_mesyuaratpermohonan.permohonan_id')
+        ->andWhere('tbl_mesyuaratpermohonan.mesyPerm_id = "'.$id.'"');
 
         $command=$query->createCommand();
         $data=$command->queryAll();
 
         return $this->render('view', [
-            'data' => $data,
-            'model' => $this->findModel($id),
+
+            'view'=>$dataAlat,
+            'sumPermohonan'=>$sumPermohonan,
+            'sumMesyuarat'=>$sumMesyuarat,
+            'viewUnit'=>$data,
+            'model' => $model,
+            'statusMesyuarat' => $statusMesyuarat,
         ]);
     }
 
@@ -116,7 +191,7 @@ class TblMesyuaratpermohonanController extends Controller
             'tbl_peralatan.katPelanggan_id as katPelanggan_id',
             'tbl_peralatan.alat_tujuan as alat_tujuan',
             'tbl_peralatan.katPermohonan_id as katPermohonan_id',
-            'tbl_peralatan.alat_jenisPeruntukan as alat_jenisPeruntukan',
+            'tbl_peralatan.jen_id as jen_id',
             'tbl_peralatan.alat_programBaru as alat_programBaru',
             'tbl_peralatan.alat_tahap as alat_tahap',
             'tbl_peralatan.tahunSedia_id as tahunSedia_id',
@@ -125,15 +200,18 @@ class TblMesyuaratpermohonanController extends Controller
             'tbl_peralatan.alat_lokasi as alat_lokasi',
             // 'count(alat_id) as count',
 
-            'tbl_tahun.tahun_tahun as tahun_tahun'
+            'tbl_tahun.tahun_tahun as tahun_tahun',
+            'tbl_jenisperuntukan.jen_nama as jen_nama'
         ])
-        ->from('tbl_peralatan, tbl_tahun')
+        ->from('tbl_peralatan, tbl_tahun, tbl_jenisperuntukan')
 
-        ->where('tbl_peralatan.tahunSedia_id = tbl_tahun.tahun_id')
+        ->where('tbl_peralatan.tahunSedia_id = tbl_tahun.tahun_id')           
+        ->andWhere('tbl_jenisperuntukan.jen_id = tbl_peralatan.jen_id')
         ->andWhere('tbl_peralatan.permohonan_id = "'.$id.'"');
 
         $command=$alat->createCommand();
         $dataAlat=$command->queryAll();
+        $sum = $alat->sum('alat_jumlahHarga');
 
         $query = new Query;
         $query ->select([
@@ -155,6 +233,7 @@ class TblMesyuaratpermohonanController extends Controller
         $template1->WriteHTML($this->renderPartial('template1', [
             'view'=>$dataAlat,
             'viewUnit'=>$data,
+            'sum' => $sum,
             'model' => $this->findModel($id),
             ]));
         $template1->Output();
@@ -187,6 +266,9 @@ class TblMesyuaratpermohonanController extends Controller
         $command=$alat->createCommand();
         $dataAlat=$command->queryAll();
 
+        $sumPermohonan = $alat->sum('alat_jumlahHarga');
+        $sumMesyuarat = $alat->sum('mesy_jumlahHarga');
+
         $query = new Query;
         $query ->select([
         'tbl_unit.unit_nama as unit',
@@ -207,9 +289,56 @@ class TblMesyuaratpermohonanController extends Controller
         $template2->WriteHTML($this->renderPartial('template2', [
             'view'=>$dataAlat,
             'viewUnit'=>$data,
+            'sumPermohonan'=>$sumPermohonan,
+            'sumMesyuarat'=>$sumMesyuarat,
             'model' => $this->findModel($id),
             ]));
         $template2->Output();
+        exit;
+    }
+
+    //function for print pdf
+    public function actionPdf($id)
+    {
+        $model = $this->findModel($id);
+
+        $alat = new Query;
+        $alat ->select([
+            'tbl_peralatan.alat_nama as alat_nama',
+            'tbl_peralatan.alat_kodAkaun as alat_kodAkaun',
+            'tbl_peralatan.alat_kuantiti as alat_kuantiti',
+            'tbl_peralatan.alat_hargaUnit as alat_hargaUnit',
+            'tbl_peralatan.alat_jumlahHarga as alat_jumlahHarga',
+            'tbl_peralatan.jk_id as jk_id',
+            'tbl_peralatan.katPelanggan_id as katPelanggan_id',
+            'tbl_peralatan.alat_tujuan as alat_tujuan',
+            'tbl_peralatan.katPermohonan_id as katPermohonan_id',
+            'tbl_peralatan.alat_programBaru as alat_programBaru',
+            'tbl_peralatan.alat_tahap as alat_tahap',
+            'tbl_peralatan.tahunSedia_id as tahunSedia_id',
+            'tbl_peralatan.alat_pegawai as alat_pegawai',
+            'tbl_peralatan.alat_jawatan as alat_jawatan',
+            'tbl_peralatan.alat_lokasi as alat_lokasi',
+            // 'count(alat_id) as count',
+
+            'tbl_tahun.tahun_tahun as tahun_tahun',
+            'tbl_jenisperuntukan.jen_nama as jen_nama'
+        ])
+       ->from('tbl_peralatan, tbl_tahun, tbl_jenisperuntukan')
+
+       ->where('tbl_peralatan.tahunSedia_id = tbl_tahun.tahun_id')           
+            ->andWhere('tbl_jenisperuntukan.jen_id = tbl_peralatan.jen_id')
+       ->andWhere('tbl_peralatan.permohonan_id = "'.$id.'"');
+
+       $command=$alat->createCommand();
+       $dataAlat=$command->queryAll();
+
+        $mpdf=new mPDF('c', 'A4-L');
+        $mpdf->WriteHTML($this->renderPartial('print', [
+            'view'=>$dataAlat,
+            'model' => $this->findModel($id),
+            ]));
+        $mpdf->Output();
         exit;
     }
 
@@ -278,9 +407,10 @@ class TblMesyuaratpermohonanController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $modelsPermohonan = TblPermohonan::find()->where(['permohonan_id' => $model->permohonan_id])->one();
         $modelsAlatmesyuarat = $model->tblMesyuaratperalatans;
 
-        if ($model->load(Yii::$app->request->post())) {
+        if ($model->load(Yii::$app->request->post()) && $modelsPermohonan->load(Yii::$app->request->post())) {
 
             $oldIDs = ArrayHelper::map($modelsAlatmesyuarat, 'mesy_id', 'mesy_id');
             $modelsAlatmesyuarat = Model::createMultipleMesyuarat(TblMesyuaratperalatan::classname(), $modelsAlatmesyuarat);
@@ -298,6 +428,7 @@ class TblMesyuaratpermohonanController extends Controller
 
             // validate all models
             $valid = $model->validate();
+            $valid = $modelsPermohonan->validate() && $valid;
             $valid = Model::validateMultiple($modelsAlatmesyuarat) && $valid;
 
             if ($valid) {
@@ -314,6 +445,9 @@ class TblMesyuaratpermohonanController extends Controller
                                 break;
                             }
                         }
+
+                    $modelsPermohonan->save();
+                    
                     }
                     if ($flag) {
                         $transaction->commit();
@@ -327,6 +461,7 @@ class TblMesyuaratpermohonanController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'modelsPermohonan' => $modelsPermohonan,
             'modelsAlatmesyuarat' => (empty($modelsAlatmesyuarat)) ? [new TblMesyuaratperalatan] : $modelsAlatmesyuarat
         ]);
     }

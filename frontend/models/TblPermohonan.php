@@ -40,7 +40,7 @@ class TblPermohonan extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'permohonan_tarikh', 'statMohon_id', 'dekan_id', 'status_id'], 'required'],
+            [['user_id', 'permohonan_tarikh', 'statMohon_id', 'status_id'], 'required'],
             [['user_id', 'statMohon_id', 'dekan_id', 'status_id'], 'integer'],
             [['permohonan_tarikh'], 'safe'],
             [['permohonan_pusatKos'], 'string', 'max' => 200],

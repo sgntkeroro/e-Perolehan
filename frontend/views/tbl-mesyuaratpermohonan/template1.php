@@ -1,7 +1,20 @@
 <?php
-    use yii\helpers\Html;
-    use yii\db\Query;
-    use yii\db\Command;
+use yii\helpers\Html;
+use yii\db\Query;
+use yii\db\Command;
+use frontend\models\TblPermohonan;
+use frontend\models\TblModerator;
+use frontend\models\TblBhgnmod;
+use frontend\models\TblBahagian;
+use frontend\models\TblUnit;
+
+$permohonan = TblPermohonan::find()->where(['permohonan_id' => $model->permohonan_id])->one();
+$moderator = TblModerator::find()->where(['user_id' => $permohonan->user_id])->one();
+$bm = TblBhgnmod::find()->where(['bm_id' => $moderator->bm_id])->one();
+$bhgn = TblBahagian::find()->where(['bahagian_id' => $bm->bahagian_id])->one();
+$unit = TblUnit::find()->where(['unit_id' => $bm->unit_id])->one();
+
+$nombor = 1;
 ?>
 
 <style type="text/css">
@@ -31,14 +44,14 @@
 	<font face="arial">
 		<u><b>
 			Senarai Permohonan 
-            <?php foreach ($viewUnit as $bahagian): ?>
-                <?= $bahagian['unit'] ?>
-            <?php endforeach; ?>
+            <?= $bhgn->bahagian_nama ?>,
+            <?= $unit->unit_nama ?>,
+            <?= $bm->unit_kampuscawangan ?>.
 		<br>
 		Mesyuarat Permohonan Peruntukan Kumpulan Wang Pendapatan (KY) <?= date(Y) ?> Bagi 
-			<?php foreach ($viewUnit as $bahagian): ?>
-	        	<?= $bahagian['unit'] ?>
-			<?php endforeach; ?>
+			<?= $bhgn->bahagian_nama ?>,
+            <?= $unit->unit_nama ?>,
+            <?= $bm->unit_kampuscawangan ?>.
 	</b></u>
     </font>
 </p>
@@ -66,9 +79,9 @@
             <?php endforeach; ?>
           </td>
           <td style="border-bottom: 0px solid; text-align:left">
-            <?php foreach ($viewUnit as $bahagian): ?>
-              <b><?= $bahagian['unit'] ?></b>
-            <?php endforeach; ?>
+            <b><?= $bhgn->bahagian_nama ?>,
+            <?= $unit->unit_nama ?>,
+            <?= $bm->unit_kampuscawangan ?>.</b>
           </td>
           <td style="border-bottom: 0px solid; text-align:left">
             <?php foreach ($view as $row): ?>
@@ -106,7 +119,7 @@
           <td>
           </td>
           <td>
-            <b>Jumlah</b>
+            <b><?= $sum ?></b>
           </td>
           <td></td>
           <td></td>

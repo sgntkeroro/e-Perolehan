@@ -34,7 +34,8 @@ class TblBhgnmod extends \yii\db\ActiveRecord
     {
         return [
             [['bahagian_id', 'unit_id'], 'required'],
-            [['bahagian_id', 'unit_id', 'unitKC_id'], 'integer'],
+            [['bahagian_id', 'unit_id'], 'integer'],
+            [['unit_kampuscawangan'], 'string', 'max' => 200],
         ];
     }
 

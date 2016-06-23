@@ -15,15 +15,15 @@ use yii\widgets\ActiveForm;
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'permohonan_id') ?>
+    <?= $form->field($model, 'globalSearch') ?>
 
-    <?= $form->field($model, 'user_id') ?>
+    <?php // echo $form->field($model, 'user_id') ?>
 
-    <?= $form->field($model, 'permohonan_tarikh') ?>
+    <?php // echo $form->field($model, 'permohonan_tarikh') ?>
 
-    <?= $form->field($model, 'permohonan_pusatKos') ?>
+    <?php // echo $form->field($model, 'permohonan_pusatKos') ?>
 
-    <?= $form->field($model, 'statMohon_id') ?>
+    <?php // echo $form->field($model, 'statMohon_id') ?>
 
     <?php // echo $form->field($model, 'dekan_id') ?>
 

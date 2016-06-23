@@ -14,6 +14,7 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 
 use frontend\models\TblModerator;
+use frontend\models\TblModeratorSearch;
 use frontend\models\TblPermohonan;
 use frontend\models\TblPermohonanSearch;
 
@@ -122,13 +123,6 @@ class SiteController extends Controller
             switch($role){
                 case '1' :
                     return $this->render('Page_moderator');// view for super user
-                    // $searchModel = new TblPermohonanSearch();
-                    // $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-                    // return $this->render('//tbl-permohonan/index', [
-                    //     'searchModel' => $searchModel,
-                    //     'dataProvider' => $dataProvider,
-                    // ]);
                 break;
 
                 case '2':
@@ -140,7 +134,7 @@ class SiteController extends Controller
                 break;
 
                 case '4':
-                    return $this->render('Page_sysOp');// view for super user
+                    return $this->redirect('/e-Perolehan/backend/web/index.php');// view for super user
                 break;
             }
         }

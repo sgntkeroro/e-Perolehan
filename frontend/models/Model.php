@@ -94,4 +94,59 @@ class Model extends \yii\base\Model
 
         return $models;
     }
+
+    public static function createMultipleKehadiran($modelClass, $multipleModels = [])
+    {
+        $model    = new $modelClass;
+        $formName = $model->formName();
+        $post     = Yii::$app->request->post($formName);
+        $models   = [];
+
+        if (! empty($multipleModels)) {
+            $keys = array_keys(ArrayHelper::map($multipleModels, 'hadir_id', 'hadir_id'));
+            $multipleModels = array_combine($keys, $multipleModels);
+        }
+
+        if ($post && is_array($post)) {
+            foreach ($post as $indexHadir => $item) {
+                if (isset($item['hadir_id']) && !empty($item['hadir_id']) && isset($multipleModels[$item['hadir_id']])) {
+                    $models[] = $multipleModels[$item['hadir_id']];
+                } 
+                else {
+                    $models[] = new $modelClass;
+                }
+            }
+        }
+
+        unset($model, $formName, $post);
+
+        return $models;
+    }
+
+    public static function createMultiplePerkara($modelClass, $multipleModels = [])
+    {
+        $model    = new $modelClass;
+        $formName = $model->formName();
+        $post     = Yii::$app->request->post($formName);
+        $models   = [];
+
+        if (! empty($multipleModels)) {
+            $keys = array_keys(ArrayHelper::map($multipleModels, 'perkara_id', 'perkara_id'));
+            $multipleModels = array_combine($keys, $multipleModels);
+        }
+
+        if ($post && is_array($post)) {
+            foreach ($post as $indexPerkaraSatu => $item) {
+                if (isset($item['perkara_id']) && !empty($item['perkara_id']) && isset($multipleModels[$item['perkara_id']])) {
+                    $models[] = $multipleModels[$item['perkara_id']];
+                } else {
+                    $models[] = new $modelClass;
+                }
+            }
+        }
+
+        unset($model, $formName, $post);
+
+        return $models;
+    }
 }

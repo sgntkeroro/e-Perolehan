@@ -8,20 +8,19 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
 $this->title = 'Login';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="site-login">
-    <h1><?= Html::encode($this->title) ?></h1>
+<div class="site-login" align = "center">
+    <div class="panel panel-default" style = "width:500px; text-align:center">
+        <div class="panel-heading" style = "background-color:#1E1E1E;"><h3><b><font color = "white">Log Masuk</font></b></h3></div>
+        <div class="panel-body">
 
-    <p>Please fill out the following fields to login:</p>
+            <p><b><font color = "crimson">* Sila isi semua butiran dibawah untuk log masuk *</font></b></p><br>
 
-    <div class="row">
-        <div class="col-lg-5">
             <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
 
-                <?= $form->field($model, 'username') ?>
+                <?= $form->field($model, 'username')->textInput(['style' => 'text-align:center']) ?>
 
-                <?= $form->field($model, 'password')->passwordInput() ?>
+                <?= $form->field($model, 'password')->passwordInput(['style' => 'text-align:center']) ?>
 
                 <?= $form->field($model, 'rememberMe')->checkbox() ?>
 
@@ -30,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
 
                 <div class="form-group">
-                    <?= Html::submitButton('Login', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
+                    <?= Html::submitButton('H A N T A R', ['class' => 'btn btn-lg  btn-block', 'style' => 'background-color:#1E1E1E; color:white;', 'name' => 'login-button']) ?>
                 </div>
 
             <?php ActiveForm::end(); ?>

@@ -2,13 +2,13 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model frontend\models\TblPermohonan */
 
-$this->title = $model->permohonan_id;
-$this->params['breadcrumbs'][] = ['label' => 'Senarai Permohonan', 'url' => ['index']];
-$this->params['breadcrumbs'][] = 'Permohonan No. : ' .$this->title;
+$this->title = 'ID : '.$model->permohonan_id;
+$nombor = 1;
 ?>
 
 <style type="text/css">
@@ -44,42 +44,44 @@ $this->params['breadcrumbs'][] = 'Permohonan No. : ' .$this->title;
 </style>
 
 <div>
-    <div class="btn-group btn-group-justified" role="group" aria-label="...">
-    <div class="btn-group" role="group">
-        <?= Html::a('<span class="glyphicon glyphicon-home" aria-hidden="true"> HOME</span>', ['//site/index'], ['class' => 'btn btn-info']) ?>
-    </div>
-    <div class="btn-group" role="group">
-        <?= Html::a('<span class="glyphicon glyphicon-envelope" aria-hidden="true"> PERMOHONAN</span>', ['//tbl-permohonan/index'], ['class' => 'btn btn-primary']) ?>
-    </div>
-    <div class="btn-group" role="group">
-        <?= Html::a('<span class="glyphicon glyphicon-user" aria-hidden="true"> PROFIL PENGGUNA</span>', ['//tbl-moderator/index'], ['class' => 'btn btn-info']) ?>
-    </div>
-</div><br><br>
-
 <div class="panel panel-primary" align="center">
     <!-- Default panel contents -->
     <div class="panel-heading">
-        <?= Html::a('<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>', ['update', 'id' => $model->permohonan_id], [
-        'class' => 'btn btn-success btn-sm']) ?>
-
-        <?= Html::a('<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>', ['delete', 'id' => $model->permohonan_id], [
-            'class' => 'btn btn-danger btn-sm',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-
-        <?= Html::a('<span class="glyphicon glyphicon-file" aria-hidden="true"></span>', ['pdf', 'id' => $model->permohonan_id], [
-            'class' => 'btn btn-info btn-sm',
-            'target'=>'_blank', 
+        <?= Html::a('<span class="glyphicon glyphicon-home" aria-hidden="true"></span>', ['/site/index'], [
+            'class' => 'btn btn-info',
             'data-toggle'=>'tooltip', 
-            'title'=>'Will open the generated PDF file in a new window'
+            'title'=>'HOME'
+        ]); ?>
+
+        <?= Html::a('<span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>', 
+            ['index'], [
+            'class' => 'btn btn-info',
+            'data-toggle'=>'tooltip', 
+            'title'=>'Senarai Permohonan'
         ]); ?>
     </div><br>
 
     <div class="panel panel-info" style="width:99%;">
-        <div class="panel-heading"><h4><b>BUTIRAN PERMOHONAN</b></h4></div>
+        <div class="panel-heading">
+            <h4><b>BUTIRAN PERMOHONAN</b></h4><br>
+                <?= Html::a('<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>', ['update', 'id' => $model->permohonan_id], [
+                'class' => 'btn btn-success btn-sm']) ?>
+
+                <?= Html::a('<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>', ['delete', 'id' => $model->permohonan_id], [
+                    'class' => 'btn btn-danger btn-sm',
+                    'data' => [
+                        'confirm' => 'Are you sure you want to delete this item?',
+                        'method' => 'post',
+                    ],
+                ]) ?>
+
+                <?= Html::a('<span class="glyphicon glyphicon-file" aria-hidden="true"></span>', ['pdf', 'id' => $model->permohonan_id], [
+                    'class' => 'btn btn-info btn-sm',
+                    'target'=>'_blank', 
+                    'data-toggle'=>'tooltip', 
+                    'title'=>'Will open the generated PDF file in a new window'
+                ]); ?>
+        </div>
         <div class="panel-body">
             <p>
                 <!-- Table -->
@@ -89,7 +91,6 @@ $this->params['breadcrumbs'][] = 'Permohonan No. : ' .$this->title;
                         <th>Nama Pemohon</th>
                         <th>Tarikh Permohonan</th>
                         <th>Pusat Kos</th>
-                        <th>Dekan / PTJ</th>
                     </thead>
                     <tbody>
                         <tr>
@@ -101,14 +102,22 @@ $this->params['breadcrumbs'][] = 'Permohonan No. : ' .$this->title;
                             </td>
                             <td><?= $model->permohonan_tarikh ?></td>
                             <td><?= $model->permohonan_pusatKos ?></td>
-                            <td>
-                                <?php foreach ($viewAtas as $dekan_nama): ?>
-                                    <?= $dekan_nama['dekan_nama'] ?>
-                                <?php endforeach; ?>
-                            </td>
                         </tr>
                     </tbody>
                 </table>
+            </p>
+        </div>
+    </div>
+
+    <div class="panel panel-info" style="width:99%;">
+        <div class="panel-heading">
+            <h4><b>NOTIFIKASI</b></h4>
+        </div>
+        <div class="panel-body">
+            <p>
+                Sila hantar notifikasi untuk makluman kepada pihak cspi.<br><br>               
+                <?= Html::a('Hantar Notifikasi ke CSPI', ['tbl-email/create'], [
+                'class' => 'btn btn-info btn-sm']) ?>
             </p>
         </div>
     </div>
@@ -132,22 +141,24 @@ $this->params['breadcrumbs'][] = 'Permohonan No. : ' .$this->title;
                     <tbody>
                         <tr>
                             <td>
-                                <?php foreach ($viewSurat as $permohonan_id): ?>
-                                    <?= $permohonan_id['permohonan_id'] ?>
+                                <?= $model->permohonan_id ?>
+                            </td>
+                            <td>
+                                <?php foreach ($suratSah as $suratSah_nama): ?>
+                                    <?= Html::a($suratSah_nama['suratSah_nama'], ['list', 'id' => $suratSah_nama->suratSah_id], [
+                                        'target'=>'_blank', 
+                                        'data-toggle'=>'tooltip', 
+                                        'title'=>'Will open the generated PDF file in a new window'
+                                    ]); ?>
                                 <?php endforeach; ?>
                             </td>
                             <td>
-                                <?php foreach ($viewSurat as $suratSah_nama): ?>
-                                    <?= $suratSah_nama['suratSah_nama'] ?>
-                                <?php endforeach; ?>
-                            </td>
-                            <td>
-                                <?php foreach ($viewSurat as $suratSah_tarikh): ?>
+                                <?php foreach ($suratSah as $suratSah_tarikh): ?>
                                     <?= $suratSah_tarikh['suratSah_tarikh'] ?>
                                 <?php endforeach; ?>
                             </td>
                             <td>
-                                <?php foreach ($viewSurat as $suratSah_deskripsi): ?>
+                                <?php foreach ($suratSah as $suratSah_deskripsi): ?>
                                     <?= $suratSah_deskripsi['suratSah_deskripsi'] ?>
                                 <?php endforeach; ?>
                             </td>
@@ -159,20 +170,6 @@ $this->params['breadcrumbs'][] = 'Permohonan No. : ' .$this->title;
     </div> 
 
     <div class="panel-body" align="center">
-        <div class="alert alert-success span" role="alert">
-            <b><?= Html::tag('span', 'Status Pengesahan Dekan / PTJ', [
-                'title'=>'Pengesahan dari Dekan / PTJ',
-                'data-toggle'=>'tooltip',
-                'style'=>'cursor:pointer;'
-            ]); ?></b><br><br>
-            
-            <font color="black">
-                <?php foreach ($viewStatus as $statSah_nama): ?>
-                    <?= $statSah_nama['statSah_nama'] ?>
-                <?php endforeach; ?>
-            </font>
-        </div>
-
         <div class="alert alert-info span" role="alert">
             <b><?= Html::tag('span', 'Status Permohonan', [
                 'title'=>'Anda dikehendaki memuatnaik salinan surat pengesahan yang telah disahkan dan ditandatangan oleh Dekan / PTJ terlebih dahulu supaya permohonan anda akan diproses',
@@ -196,7 +193,8 @@ $this->params['breadcrumbs'][] = 'Permohonan No. : ' .$this->title;
             
             <font color="black">
                 <?php foreach ($viewStatus as $statMesyua_status): ?>
-                    <?= $statMesyua_status['statMesyua_status'] ?>
+                    <?= Html::a( $statMesyua_status['statMesyua_status'], 
+                        ['status', 'id' => $statMesyua_status['permohonan_id']]) ?>
                 <?php endforeach; ?>
             </font>
         </div>
@@ -224,6 +222,7 @@ $this->params['breadcrumbs'][] = 'Permohonan No. : ' .$this->title;
                     <table class="table-bordered table-striped table-hover text-center"  style="font-size: 12px;">
                         <thead>
                             <tr style="background-color:#D3D3D3; font-size: 14px;">
+                                <td class="text-left" style="padding:2mm;">Bil.</td>
                                 <td class="text-left" style="padding:2mm;">Peralatan</td>
                                 <td class="text-left" style="padding:2mm;">Kod Akaun</td>
                                 <td class="text-left" style="padding:2mm;">Kuantiti</td>
@@ -241,9 +240,9 @@ $this->params['breadcrumbs'][] = 'Permohonan No. : ' .$this->title;
                             </tr>
                         </thead>
                         <tbody>                        
-                            <?php 
-                                foreach ($view as $row){
+                            <?php $nombor = $nombor; foreach ($view as $row){
                                     echo "<tr>";
+                                    echo "<td>".$nombor++."</td>";
                                     echo "<td class='text-left'>".$row['alat_nama']."</td>";
                                     echo "<td>".$row['alat_kodAkaun']."</td>";                                    
                                     echo "<td>".$row['alat_kuantiti']."</td>";
@@ -253,7 +252,7 @@ $this->params['breadcrumbs'][] = 'Permohonan No. : ' .$this->title;
                                     echo "<td>".$row['katPelanggan_id']."</td>";
                                     echo "<td class='text-left'>".$row['alat_tujuan']."</td>";
                                     echo "<td>".$row['katPermohonan_id']."</td>";
-                                    echo "<td>".$row['alat_jenisPeruntukan']."</td>";
+                                    echo "<td>".$row['jen_nama']."</td>";
                                     echo "<td>".$row['alat_programBaru']."<br><br>".$row['alat_tahap']."</td>";
                                     echo "<td>".$row['tahun_tahun']."</td>";
                                     echo "<td>".$row['alat_pegawai']."<br><br>".$row['alat_jawatan']."</td>";
@@ -289,8 +288,7 @@ $this->params['breadcrumbs'][] = 'Permohonan No. : ' .$this->title;
             </p>
         </div>
     </div>
-</div>
-    
+</div>    
 </div>
     
 

@@ -15,6 +15,7 @@
 	$query = new Query;
     $query ->select([
     'tbl_peralatan.alat_nama as alat_nama',
+    'tbl_peralatan.alat_id as alat_id',
     'tbl_peralatan.alat_kuantiti as alat_kuantiti',
     'tbl_peralatan.alat_hargaUnit as alat_hargaUnit',
     'tbl_peralatan.alat_jumlahHarga as alat_jumlahHarga',
@@ -41,20 +42,9 @@
 
 <div class="tbl-mesyuaratpermohonan-update">
 
-    <div class="btn-group btn-group-justified" role="group" aria-label="...">
-        <div class="btn-group" role="group">
-            <?= Html::a('<span class="glyphicon glyphicon-home" aria-hidden="true"> HOME</span>', ['//site/index'], ['class' => 'btn btn-info']) ?>
-        </div>
-        <div class="btn-group" role="group">
-            <?= Html::a('<span class="glyphicon glyphicon-envelope" aria-hidden="true"> PENGESAHAN PERMOHONAN</span>', ['//tbl-mesyuaratpermohonan/index'], ['class' => 'btn btn-primary']) ?>
-        </div>
-        <div class="btn-group" role="group">
-            <?= Html::a('<span class="glyphicon glyphicon-user" aria-hidden="true"> PROFIL PENGGUNA</span>', ['//tbl-cspi/index'], ['class' => 'btn btn-info']) ?>
-        </div>
-    </div><br><br>
-
     <?= $this->render('_form', [
         'model' => $model,
+        'modelsPermohonan' => $modelsPermohonan,
         'modelsAlatmesyuarat' => $modelsAlatmesyuarat,
         'view'=>$data,
         'viewbahagian'=>$databahagian,

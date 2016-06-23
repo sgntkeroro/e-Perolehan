@@ -6,8 +6,6 @@ use yii\helpers\Html;
 /* @var $model frontend\models\TblModerator */
 
 $this->title = 'Kemaskini Profil ';
-
-$this->params['breadcrumbs'][] = ['label' => 'Pengguna', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => 'Profil', 'url' => ['view', 'id' => $model->mod_id]];
 $this->params['breadcrumbs'][] = 'Kemaskini';
 ?>

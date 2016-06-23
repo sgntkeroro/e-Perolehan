@@ -15,6 +15,8 @@
 
     $command=$query->createCommand();
     $data=$command->queryAll();
+
+    $nombor = 1;
 ?>
 
 <style type="text/css">
@@ -62,38 +64,40 @@
 	<font face="arial">
 			<table style="font-size:11px; face:arial; text-align:center">
                 <tr style="background-color:grey">
-                    <td>Peralatan</td>
-                    <td>Kod Akaun</td>
-                    <td>Kuantiti</td>
-                    <td>Harga Seunit</td>
-                    <td>Jumlah</td>
-                    <td><b>*</b><br>Kelulusan Jawatankuasa</td>
-                    <td><b>**</b><br>Kategori Pelanggan</td>
-                    <td>Tujuan Pembelian</td>
-                    <td><b>***</b><br>Kategori Permohonan</td>
-                    <td>Jenis Peruntukan</td>
-                    <td>Program Baru & Tahap Pengajian</td>
-                    <td>Tahun Disediakan</td>
-                    <td>Nama Pegawai & Jawatan</td>
-                    <td>Lokasi cadangan</td>
+                    <td><font face="arial">Bil.</font></td>
+                    <td><font face="arial">Peralatan</font></td>
+                    <td><font face="arial">Kod Akaun</font></td>
+                    <td><font face="arial">Kuantiti</font></td>
+                    <td><font face="arial">Harga Seunit</font></td>
+                    <td><font face="arial">Jumlah</font></td>
+                    <td><font face="arial"><b>*</b><br>Kelulusan Jawatankuasa</font></td>
+                    <td><font face="arial"><b>**</b><br>Kategori Pelanggan</font></td>
+                    <td><font face="arial">Tujuan Pembelian</font></td>
+                    <td><font face="arial"><b>***</b><br>Kategori Permohonan</font></td>
+                    <td><font face="arial">Jenis Peruntukan</font></td>
+                    <td><font face="arial">Program Baru & Tahap Pengajian</font></td>
+                    <td><font face="arial">Tahun Disediakan</font></td>
+                    <td><font face="arial">Nama Pegawai & Jawatan</font></td>
+                    <td><font face="arial">Lokasi cadangan</font></td>
                 </tr>
 
-                <?php foreach ($view as $row): ?>
+                <?php $nombor = $nombor; foreach ($view as $row): ?>
                 <tr>
-                	<td style="text-align:left"><?= $row['alat_nama'] ?></td>
-                	<td><?= $row['alat_kodAkaun'] ?></td>
-                	<td><?= $row['alat_kuantiti'] ?></td>
-                	<td><?= $row['alat_hargaUnit'] ?></td>
-                	<td><?= $row['alat_jumlahHarga'] ?></td>
-                	<td><?= $row['jk_id'] ?></td>
-                	<td><?= $row['katPelanggan_id'] ?></td>
-                	<td style="text-align:left"><?= $row['alat_tujuan'] ?></td>
-                	<td><?= $row['katPermohonan_id'] ?></td>
-                	<td><?= $row['alat_jenisPeruntukan'] ?></td>
-                	<td><?= $row['alat_programBaru'] ?><br><?= $row['alat_tahap'] ?></td>
-                	<td><?= $row['tahun_tahun'] ?></td>
-                	<td><?= $row['alat_pegawai'] ?><br><?= $row['alat_jawatan'] ?></td>
-                	<td style="text-align:left"><?= $row['alat_lokasi'] ?></td>
+                    <td style="text-align:left"><font face="arial"><?= $nombor++ ?> . </font></td>
+                	<td style="text-align:left"><font face="arial"><?= $row['alat_nama'] ?></font></td>
+                	<td><font face="arial"><?= $row['alat_kodAkaun'] ?></font></td>
+                	<td><font face="arial"><?= $row['alat_kuantiti'] ?></font></td>
+                	<td><font face="arial"><?= $row['alat_hargaUnit'] ?></font></td>
+                	<td><font face="arial"><?= $row['alat_jumlahHarga'] ?></font></td>
+                	<td><font face="arial"><?= $row['jk_id'] ?></font></td>
+                	<td><font face="arial"><?= $row['katPelanggan_id'] ?></font></td>
+                	<td style="text-align:left"><font face="arial"><?= $row['alat_tujuan'] ?></font></td>
+                	<td><font face="arial"><?= $row['katPermohonan_id'] ?></font></td>
+                	<td><font face="arial"><?= $row['jen_nama'] ?></font></td>
+                	<td><font face="arial"><?= $row['alat_programBaru'] ?><br><?= $row['alat_tahap'] ?></font></td>
+                	<td><font face="arial"><?= $row['tahun_tahun'] ?></td>
+                	<td><font face="arial"><?= $row['alat_pegawai'] ?><br><?= $row['alat_jawatan'] ?></font></td>
+                	<td style="text-align:left"><font face="arial"><?= $row['alat_lokasi'] ?></font></td>
                 </tr>
                 <?php endforeach; ?>
             </table>
@@ -107,19 +111,19 @@
 		<b>Nota :</b><br>
 		<table>
 			<tr>
-				<td><b>*</b><br>
+				<td><font face="arial"><b>*</b><br>
 			1 - JAPD <br>
-			2 - JPPK / JTICT <br><br></td>
+			2 - JPPK / JTICT <br><br></font></td>
 
-			<td><b>**</b><br>
+			<td><font face="arial"><b>**</b><br>
 			1 - Staf Akademik <br>
 			2 - Staf Pentadbiran <br>
-			3 - Pelajar<br><br></td>
+			3 - Pelajar<br><br></font></td>
 
-			<td><b>***</b><br>
+			<td><font face="arial"><b>***</b><br>
 			1 - Tambahan kepada yang sedia ada <br>
 			2 - Gantian bagi yang dilupuskan <br>
-			3 - Permohonan baru<br><br></td>
+			3 - Permohonan baru<br><br></font></td>
 			</tr>
 		</table>
 	</font>

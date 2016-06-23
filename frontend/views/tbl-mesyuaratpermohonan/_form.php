@@ -3,9 +3,12 @@
 
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
+use frontend\models\TblStatmesyua;
+use frontend\models\TblStatus;
 
 use yii\helpers\Url;
 use yii\bootstrap\ActiveForm;
+use kartik\date\DatePicker;
 use wbraganca\dynamicform\DynamicFormWidget;
 use yii\jui\JuiAsset;
 use yii\web\JsExpression;
@@ -17,13 +20,21 @@ use yii\web\JsExpression;
 
 <style type="text/css">
     .textInput {
-    height:20px;
-    font-size: 11px; 
-    padding: 1px 1px 1px 1px;    
-  } 
+        height:20px;
+        font-size: 11px; 
+        padding: 1px 1px 1px 1px;    
+    } 
+
+    table thead {
+        height: 70px;
+    }
+
+    .tr {
+        height: 100px;
+    }
 </style>
 
-<div class="tbl-permohonan-form textInput">
+<div class="tbl-permohonan-form">
 
     <?php $form = ActiveForm::begin([
         'options' => [
@@ -32,109 +43,106 @@ use yii\web\JsExpression;
         ]
     ]); ?>
 
-    <div class="row">
-        <div class="col-sm-2">
-            <?= $form->field($model, 'statMesyua_id')->textInput(['value'=>Yii::$app->user->identity->id, 'readonly' => true, 'class' => "textInput"]) ?>
+    <div class = "panel panel-primary">
+        <div class = "panel-heading" style = "text-align:center"><h4><b>BUTIRAN MESYUARAT</b></h4>
         </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'mesyPerm_tarikh')->textInput(['value'=>date('Y-m-d'), 'readonly' => true, 'class' => "textInput"]) ?>
-        </div>
-        <div class="col-sm-2">
-            <?= $form->field($model, 'mesyPerm_catitan')->textInput(['maxlength' => true, 'class' => "textInput"]) ?>
+        <div class = "panel-body">
+            <div class="col-sm-4">
+                <?= $form->field($model, 'statMesyua_id')->dropDownList(
+                    ArrayHelper::map(TblStatmesyua::find()->all(),'statMesyua_id','statMesyua_status')
+                ) ?>
+            </div>
+            <div class="col-sm-4">
+                <?= $form->field($modelsPermohonan, 'status_id')->dropDownList(
+                    ArrayHelper::map(TblStatus::find()->all(),'status_id','status_status')
+                ) ?>
+            </div>
+            <div class="col-sm-4">
+                <?= $form->field($model, 'mesyPerm_tarikh')->widget(DatePicker::classname(), [
+                    'options' => ['placeholder' => 'pilih tarikh mesyuarat'],
+                    'pluginOptions' => [
+                        'format' => 'yyyy-mm-dd',
+                        'autoclose'=>true
+                    ]
+                ]); ?>
+            </div>
+            <div class="col-sm-4">
+                <?= $form->field($model, 'mesyPerm_catitan')->textArea(['rows' => 2]) ?>
+            </div>
         </div>
     </div>
-
-    <div id="panel-option-values">
-        <?php DynamicFormWidget::begin([
-            'widgetContainer' => 'dynamicform_wrapper',
-            'widgetBody' => '.form-options-body',
-            'widgetItem' => '.form-options-item',
-            'min' => 1,
-            'insertButton' => '.add-item',
-            'deleteButton' => '.delete-item',
-            'model' => $modelsAlatmesyuarat[0],
-            'formId' => 'dynamic-form',
-            'formFields' => [
-                'mesy_kuantiti',
-                'mesy_jumlahHarga',
-                'mesy_catitan'
-            ],
-        ]); ?>
-
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover table-striped text-center"  style="float: left; width: 59%;">
-                <thead style="font-size: 11px;">
-                    <tr class="info">
-                        <th class="required text-center">Bahagian / Cawangan</th>
-                        <th class="required text-center">Permohonan</th>
-                        <th class="required text-center">Kuantiti</th>
-                        <th class="required text-center">Harga Seunit</th>
-                        <th class="required text-center">Permohonan Daripada PTJ</th>
-                    </tr>
-                </thead>
-                <tbody class="form-options-body">                                        
-                        <tr class="form-options-item">
-                            <td>
-                                <?php foreach ($viewbahagian as $bahagian): ?>
-                                <?= $bahagian['bahagian_nama'] ?>
-                                <?php endforeach; ?>
-                            </td>
-                            <td align="left">
-                                <?php foreach ($view as $alat_nama): ?>
-                                <?= $alat_nama['alat_nama'] ?><br><br>
-                                <?php endforeach; ?>
-                            </td>
-                            <td>
-                                <?php foreach ($view as $alat_kuantiti): ?>
-                                <?= $alat_kuantiti['alat_kuantiti'] ?><br><br>
-                                <?php endforeach; ?>
-                            </td>
-                            <td>
-                                <?php foreach ($view as $alat_hargaUnit): ?>
-                                <?= $alat_hargaUnit['alat_hargaUnit'] ?><br><br>
-                                <?php endforeach; ?>
-                            </td>
-                            <td>
-                                <?php foreach ($view as $alat_jumlahHarga): ?>
-                                <?= $alat_jumlahHarga['alat_jumlahHarga'] ?><br><br>
-                                <?php endforeach; ?>
-                            </td>
-                        </tr>                    
-                </tbody>
-            </table>
-
-            <table class="table table-bordered table-hover table-striped text-center"  style="float: right; width: 25%;">
-            <thead style="font-size: 11px;">
-                <tr class="info">                                        
-                        <th class="required text-center">Kuantiti<br>Diluluskan</th>
-                        <th class="required text-center">Jumlah<br>Diluluskan</th>
-                        <th class="required text-center">Catitan</th>
-                </tr>
-            </thead>
-            <tbody class="form-options-body">
-                <?php foreach ($modelsAlatmesyuarat as $index => $modelAlatmesyuarat): ?>
-                    <tr class="form-options-item">
-                        <td>
-                            <?= $form->field($modelAlatmesyuarat, "[{$index}]mesy_kuantiti")->label(false)->textInput(['maxlength' => true, 'class' => "textInput"]) ?>
-                        </td>
-                        <td>
-                            <?= $form->field($modelAlatmesyuarat, "[{$index}]mesy_jumlahHarga")->label(false)->textInput(['maxlength' => true, 'class' => "textInput"]) ?>
-                        </td>
-                        <td>
-                            <?= $form->field($modelAlatmesyuarat, "[{$index}]mesy_catitan")->label(false)->textInput(['maxlength' => true, 'class' => "textInput"]) ?>
-                        </td>
-                        <?php if (!$modelAlatmesyuarat->isNewRecord): ?>
-                            <?= Html::activeHiddenInput($modelAlatmesyuarat, "[{$index}]mesy_id"); ?>
-                        <?php endif; ?>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+    <div class = "panel panel-primary">
+        <div class = "panel-heading" style = "text-align:center">
+            <h4><b>JADUAL PERALATAN</b></h4>
         </div>
-
-
-        <?php DynamicFormWidget::end(); ?>
-    </div>
+        <div class = "panel-body">
+            <div class="row">
+                <div class="col-md-7">
+                    <table class = "table table-striped table-hover">
+                        <thead style = "background-color:#7CFC00">
+                            <th class="text-left">Permohonan</th>
+                            <th class="text-center">Kuantiti</th>
+                            <th class="text-center">Harga Seunit</th>
+                            <th class="text-center">PTJ</th>
+                        </thead>
+                        <tbody>
+                            <?php $nombor = 1; $nombor = $nombor; foreach ($view as $alat_nama): ?>
+                            <tr class = "tr">
+                                <td><?= $nombor++ ?> . <?= $alat_nama['alat_nama'] ?></td> 
+                                <td class="text-center"><?= $alat_nama['alat_kuantiti'] ?></td> 
+                                <td class="text-center"><?= $alat_nama['alat_hargaUnit'] ?></td> 
+                                <td class="text-center"><?= $alat_nama['alat_jumlahHarga'] ?></td>                     
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-5">
+                    <table class = "table table-striped table-hover">
+                        <thead style = "background-color:#7CFC00">
+                            <th class="text-center">Kuantiti</th>
+                            <th class="text-center">Jumlah</th>
+                            <th class="text-center">Catitan</th>
+                        </thead>
+                        <?php DynamicFormWidget::begin([
+                            'widgetContainer' => 'dynamicform_wrapper',
+                            'widgetBody' => '.form-options-body',
+                            'widgetItem' => '.form-options-item',
+                            'min' => 1,
+                            'insertButton' => '.add-item',
+                            'deleteButton' => '.delete-item',
+                            'model' => $modelsAlatmesyuarat[0],
+                            'formId' => 'dynamic-form',
+                            'formFields' => [
+                                'mesy_kuantiti',
+                                'mesy_jumlahHarga',
+                                'mesy_catitan'
+                            ],
+                        ]); ?>
+                        <tbody class="form-options-body">
+                            <?php foreach ($modelsAlatmesyuarat as $index => $modelAlatmesyuarat): ?>
+                                <tr class="form-options-item tr">
+                                    <td>
+                                        <?= $form->field($modelAlatmesyuarat, "[{$index}]mesy_kuantiti")->label(false)->textInput(['maxlength' => true, 'style' => 'text-align:center']) ?>
+                                    </td>
+                                    <td>
+                                        <?= $form->field($modelAlatmesyuarat, "[{$index}]mesy_jumlahHarga")->label(false)->textInput(['maxlength' => true, 'style' => 'text-align:center']) ?>
+                                    </td>
+                                    <td>
+                                        <?= $form->field($modelAlatmesyuarat, "[{$index}]mesy_catitan")->label(false)->textArea(['rows' => 2]) ?>
+                                    </td>
+                                    <?php if (!$modelAlatmesyuarat->isNewRecord): ?>
+                                        <?= Html::activeHiddenInput($modelAlatmesyuarat, "[{$index}]mesy_id"); ?>
+                                    <?php endif; ?>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                        <?php DynamicFormWidget::end(); ?>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>    
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Hantar' : 'Hantar', ['class' => 'btn btn-primary']) ?>

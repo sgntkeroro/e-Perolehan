@@ -1,6 +1,10 @@
 <?php
 
 use yii\helpers\Html;
+use frontend\models\TblModerator;
+use frontend\models\TblBhgnmod;
+use frontend\models\TblBahagian;
+use frontend\models\TblUnit;
 
 /* @var $this yii\web\View */
 /* @var $model frontend\models\TblPermohonan */
@@ -9,26 +13,34 @@ $this->title = 'Kemaskini Butiran Permohonan : ' . $model->permohonan_id;
 $this->params['breadcrumbs'][] = ['label' => 'Senarai Permohonan', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => 'Permohonan', 'url' => ['view', 'id' => $model->permohonan_id]];
 $this->params['breadcrumbs'][] = 'Kemaskini';
+
+$moderator = TblModerator::find()->where(['user_id' => Yii::$app->user->identity->id])->one();
+$bm = TblBhgnmod::find()->where(['bm_id' => $moderator->bm_id])->one();
+$bhgn = TblBahagian::find()->where(['bahagian_id' => $bm->bahagian_id])->one();
+$unit = TblUnit::find()->where(['unit_id' => $bm->unit_id])->one();
 ?>
-<div class="tbl-permohonan-update">
 
-	<div>
-	<div class="btn-group btn-group-justified" role="group" aria-label="...">
-	    <div class="btn-group" role="group">
-	        <?= Html::a('<span class="glyphicon glyphicon-home" aria-hidden="true"> HOME</span>', ['//site/index'], ['class' => 'btn btn-info']) ?>
-	    </div>
-	    <div class="btn-group" role="group">
-	        <?= Html::a('<span class="glyphicon glyphicon-envelope" aria-hidden="true"> PERMOHONAN</span>', ['//tbl-permohonan/index'], ['class' => 'btn btn-primary']) ?>
-	    </div>
-	    <div class="btn-group" role="group">
-	        <?= Html::a('<span class="glyphicon glyphicon-user" aria-hidden="true"> PROFIL PENGGUNA</span>', ['//tbl-moderator/index'], ['class' => 'btn btn-info']) ?>
-	    </div>
-	</div><br><br>
+<style type="text/css">
+    .span { 
+    display:inline-block;
+    width: 500px;
+    }       
+</style>
 
-    <?= $this->render('_form', [
-        'model' => $model,
-        'modelsPeralatan' => $modelsPeralatan,
-        'modelsMesyuarat' => $modelsMesyuarat,
-    ]) ?>
-
+<div class="tbl-permohonan-update" style = "text-align:center">
+	<div class="alert alert-success span" role="alert">
+        <b><?= Html::tag('span', 'Permohonan ini dibuat oleh '.$moderator->mod_nama.'<br>mewakili'); ?></b><br><br>
+        
+        <font color="black">
+            <?= $bhgn->bahagian_nama ?>,
+            <?= $unit->unit_nama ?>,
+            <?= $bm->unit_kampuscawangan ?>.
+        </font>
+    </div>
 </div>
+
+<?= $this->render('_form', [
+    'model' => $model,
+    'modelsPeralatan' => $modelsPeralatan,
+    'modelsMesyuarat' => $modelsMesyuarat,
+]) ?>

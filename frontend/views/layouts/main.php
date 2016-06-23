@@ -50,7 +50,7 @@ AppAsset::register($this);
         'brandLabel' => '<font size="5"><b> e-Perolehan</b></font>',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
-            'class' => 'my-navbar navbar-fixed-top',
+            'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
     $menuItems = [
