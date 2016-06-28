@@ -110,15 +110,6 @@ $nombor = 1;
         </div>
     </div>
 
-    <div class = "panel panel-info" style="width:99%;">
-      <div class = "panel-heading"><h4><b>STATUS KESELURUHAN</b></h4></div>
-      <div class = "panel-body">
-        Untuk menentukan sama ada permohonan masih aktif ataupun sudah selesai<br><br>
-        <?= Html::a('Status', ['tbl-email/create'], [
-                'class' => 'btn btn-info btn-sm']) ?>
-      </div>
-    </div>
-
     <div class="panel panel-info" style="width:99%;">
         <div class="panel-heading"><h4><b>JADUAL PERALATAN</b></h4></div>
         <div class="panel-body">

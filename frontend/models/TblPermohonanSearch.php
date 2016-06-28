@@ -20,7 +20,7 @@ class TblPermohonanSearch extends TblPermohonan
     public function rules()
     {
         return [
-            [['permohonan_id', 'user_id', 'statMohon_id', 'dekan_id', 'status_id'], 'integer'],
+            [['permohonan_id', 'user_id', 'statMohon_id', 'kat_id', 'status_id', 'sok_id'], 'integer'],
             [['permohonan_tarikh', 'globalSearch', 'permohonan_pusatKos'], 'safe'],
         ];
     }
@@ -53,16 +53,21 @@ class TblPermohonanSearch extends TblPermohonan
             break;
 
             case '2':
-            $query = TblPermohonan::find()->where(['dekan_id' => Yii::$app->user->identity->id]);
+            $query = TblPermohonan::find();
             break;
 
             case '3' :
-            $query = TblPermohonan::find();
+            $query = TblPermohonan::find()
+            ->where (['kat_id' => 2]);
             break;
 
             case '4':
-            $query = TblPermohonan::find();
+            $query = TblPermohonan::find()
+            ->where (['kat_id' => 3]);
             break;
+
+            case '5':
+            $query = TblPermohonan::find();
         }
         
         // $query = TblPermohonan::find()->where(['user_id' => Yii::$app->user->identity->id]);
@@ -90,7 +95,8 @@ class TblPermohonanSearch extends TblPermohonan
             'user_id' => $this->user_id,
             'permohonan_tarikh' => $this->permohonan_tarikh,
             'statMohon_id' => $this->statMohon_id,
-            'dekan_id' => $this->dekan_id,
+            'kat_id' => $this->kat_id,
+            'sok_id' => $this->sok_id,
             'status_id' => $this->status_id,
         ]);
 

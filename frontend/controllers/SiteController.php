@@ -126,14 +126,18 @@ class SiteController extends Controller
                 break;
 
                 case '2':
-                    return $this->render('Page_dekan');// view for super user
+                    return $this->render('Page_cspi');// view for super user
                 break;
 
                 case '3' :
-                    return $this->render('Page_cspi');    // view for admin
+                    return $this->render('Page_pnc1');    // view for admin
                 break;
 
-                case '4':
+                case '4' :
+                    return $this->render('Page_pnc2');    // view for admin
+                break;
+
+                case '5':
                     return $this->redirect('/e-Perolehan/backend/web/index.php');// view for super user
                 break;
             }
@@ -223,6 +227,8 @@ class SiteController extends Controller
                         return $this->redirect(['site/login']);
                     }
                     else {
+
+                        $this->layout = 'noNav';
                         $role = Yii::$app->user->identity->role_id;
                         
                         switch($role){

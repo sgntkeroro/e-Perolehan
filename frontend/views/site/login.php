@@ -18,7 +18,7 @@ $this->title = 'Login';
 
             <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
 
-                <?= $form->field($model, 'username')->textInput(['style' => 'text-align:center']) ?>
+                <?= $form->field($model, 'username')->label('Staff ID')->textInput(['style' => 'text-align:center']) ?>
 
                 <?= $form->field($model, 'password')->passwordInput(['style' => 'text-align:center']) ?>
 

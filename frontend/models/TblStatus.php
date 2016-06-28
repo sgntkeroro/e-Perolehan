@@ -51,4 +51,12 @@ class TblStatus extends \yii\db\ActiveRecord
     {
         return $this->hasMany(TblPermohonan::className(), ['status_id' => 'status_id']);
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPermohonandua()
+    {
+        return $this->hasMany(Permohonan::className(), ['status_id' => 'status_id']);
+    }
 }

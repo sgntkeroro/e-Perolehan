@@ -2,41 +2,53 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\ArrayHelper;
+use yii\grid\ActionColumn;
+
+use frontend\models\TblRole;
 
 /* @var $this yii\web\View */
 /* @var $searchModel frontend\models\UserSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Users';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="user-index">
+<div class = "panel panel-primary">
+    <div class = "panel-heading" style = "text-align:center">
+        <?= Html::a('<span class="glyphicon glyphicon-home" aria-hidden="true"></span>', ['/site/index'], [
+            'class' => 'btn btn-info',
+            'data-toggle'=>'tooltip', 
+            'title'=>'HOME'
+        ]); ?>
+    </div>
+    <div class = "panel-body">
+        <br>
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'filterModel' => $searchModel,
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
 
-    <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+                // 'id',
+                'username',
+                // 'auth_key',
+                // 'password_hash',
+                // 'password_reset_token',
+                'email:email',
+                // 'status',
+                // 'created_at',
+                // 'updated_at',
+                // 'role_id',
+                [
+                    'label' => 'Role',
+                    'attribute' => 'role_id',
+                    'value' => 'role.role_name',
+                    'filter' => Html::activeDropDownList($searchModel, 'role_id', ArrayHelper::map(TblRole::find()->asArray()->all(), 'role_id', 'role_name'),['class'=>'form-control','prompt' => 'Sila Pilih']),
+                ], 
 
-    <p>
-        <?= Html::a('Create User', ['create'], ['class' => 'btn btn-success']) ?>
-        <?= Html::a('Table Apoi', ['table'], ['class' => 'btn btn-success']) ?>
-    </p>
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'username',
-            'auth_key',
-            'password_hash',
-            'password_reset_token',
-            // 'email:email',
-            // 'status',
-            // 'created_at',
-            // 'updated_at',
-            // 'role_id',
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
+                // ['class' => 'yii\grid\ActionColumn'],
+                ['class' => ActionColumn::className(),'template'=>'{update} {delete}' ],
+            ],
+        ]); ?>
+    </div>    
 </div>

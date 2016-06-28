@@ -41,12 +41,29 @@ class User extends \yii\db\ActiveRecord
     {
         return [
             [['username', 'auth_key', 'password_hash', 'email', 'created_at', 'updated_at', 'role_id'], 'required'],
-            [['status', 'created_at', 'updated_at', 'role_id'], 'integer'],
-            [['username', 'password_hash', 'password_reset_token', 'email'], 'string', 'max' => 255],
+            [['username', 'status', 'created_at', 'updated_at', 'role_id'], 'integer'],
+            [['password_hash', 'password_reset_token', 'email'], 'string', 'max' => 255],
             [['auth_key'], 'string', 'max' => 32],
             [['username'], 'unique'],
             [['email'], 'unique'],
             [['password_reset_token'], 'unique'],
+
+            // ['username', 'filter', 'filter' => 'trim'],
+            // ['username', 'required'],
+            // ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
+            // ['username', 'string', 'min' => 2, 'max' => 255],
+
+            // ['email', 'filter', 'filter' => 'trim'],
+            // ['email', 'required'],
+            // ['email', 'email'],
+            // ['email', 'string', 'max' => 255],
+            // ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
+
+            // ['password', 'required'],
+            // ['password', 'string', 'min' => 6],
+
+            // ['role_id', 'integer'],            
+            // ['role_id', 'required'],
         ];
     }
 
@@ -57,7 +74,7 @@ class User extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'username' => 'Username',
+            'username' => 'Staff ID',
             'auth_key' => 'Auth Key',
             'password_hash' => 'Password Hash',
             'password_reset_token' => 'Password Reset Token',
@@ -104,8 +121,24 @@ class User extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getPermohonandua()
+    {
+        return $this->hasMany(Permohonan::className(), ['user_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getTblSysops()
     {
         return $this->hasMany(TblSysop::className(), ['user_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRole()
+    {
+        return $this->hasOne(TblRole::className(), ['role_id' => 'role_id']);
     }
 }

@@ -41,4 +41,12 @@ class TblRole extends \yii\db\ActiveRecord
             'role_name' => 'Role Name',
         ];
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUsers()
+    {
+        return $this->hasMany(User::className(), ['role_id' => 'role_id']);
+    }
 }

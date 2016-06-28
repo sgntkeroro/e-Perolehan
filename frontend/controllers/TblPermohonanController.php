@@ -115,21 +115,17 @@ class TblPermohonanController extends Controller
     {      
         $surat = TblSuratpengesahan::find()->where(['suratSah_id' => $id])->one();
 
-        $url = 'http://localhost/e-Perolehan/frontend/web/uploads/'.$surat->suratSah_nama;
-        // Yii::app()->createUrl('/uploads');
+        $url = '/e-Perolehan/frontend/web/uploads/'.$surat->suratSah_nama;
 
-        // $mPDF = Yii::app()->ePdf->mpdf();
-        // $mPDF->WriteHTML($this->render('list', array(), true));
-        // $mPDF->Output();
         return $this->redirect($url);
     }
 
     public function actionStatus($id)
-    {    
+    {   
+        // view untuk status mesyuarat bagi permohonan yang berstatus aktif (1).
         $model = $this->findModel($id);  
-        // $status = $model->tblMesyuaratpermohonans;
+
         $status = TblMesyuaratpermohonan::find()
-        // ->innerjoin
         ->where(['permohonan_id' => $id])->one();
 
         return $this->render('status' ,[
@@ -139,21 +135,18 @@ class TblPermohonanController extends Controller
     }
 
     public function actionStatusselesai($id)
-    {    
-        $model = $this->findModel($id);  
-        // $status = $model->tblMesyuaratpermohonans;
-        // $status = TblMesyuaratpermohonan::find()
-        // ->join('INNER JOIN','tbl_statmesyua', 'statMesyua_id=tbl_statmesyua.statMesyua_id')
-        // ->where(['permohonan_id' => $id])->one();
+    {     
+        // view untuk status mesyuarat bagi permohonan yang berstatus selesai (2).
+        $model = $this->findModel($id);
 
         return $this->render('statusselesai' ,[
             'model'=>$model,
-            // 'status'=>$status,
             ]);
     }
 
     public function actionViewselesai($id)
-    {      
+    {    
+        // view untuk permohonan yang berstatus selesai (2).  
         $model = $this->findModel($id);
 
         $query = new Query;
@@ -439,6 +432,15 @@ class TblPermohonanController extends Controller
                                 break;
                             }
 
+                            
+            if ($model->kat_id = 1) {
+                $model->sok_id = 1;
+            }
+
+            else {
+                $model->sok_id = 2;
+            }
+
                             $modelsMesyuaratpermohonan->permohonan_id = $model->permohonan_id;
                             $modelsMesyuaratpermohonan->mesyPerm_id = $modelsMesyuaratpermohonan->permohonan_id;
                             $modelsMesyuaratpermohonan->statMesyua_id = 1;
@@ -629,6 +631,23 @@ class TblPermohonanController extends Controller
      */
     public function actionDelete($id)
     {
+        $alatMesyuarat = TblMesyuaratperalatan::find()->where(['mesyPerm_id' => $id])->all();
+
+        foreach( $alatMesyuarat as $c)
+            $c->delete();
+
+        foreach( $this->findModel($id)->tblMesyuaratpermohonans as $c)
+            $c->delete();
+
+        foreach( $this->findModel($id)->tblPengesahans as $c)
+            $c->delete();
+
+        foreach( $this->findModel($id)->tblPeralatans as $c)
+            $c->delete();
+
+        foreach( $this->findModel($id)->tblSuratpengesahans as $c)
+            $c->delete();
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

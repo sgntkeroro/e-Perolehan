@@ -91,7 +91,7 @@ class UserController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index']);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -107,6 +107,21 @@ class UserController extends Controller
      */
     public function actionDelete($id)
     {
+        foreach( $this->findModel($id)->tblCspis as $c)
+            $c->delete();
+
+        foreach( $this->findModel($id)->tblDekans as $c)
+            $c->delete();
+        
+        foreach( $this->findModel($id)->tblModerators as $c)
+            $c->delete();
+        
+        foreach( $this->findModel($id)->tblPermohonans as $c)
+            $c->delete();
+        
+        foreach( $this->findModel($id)->tblSysops as $c)
+            $c->delete();
+        
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

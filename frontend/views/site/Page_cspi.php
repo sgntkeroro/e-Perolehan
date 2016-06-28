@@ -22,6 +22,7 @@ $unit = TblUnit::find()->where(['unit_id' => $bm->unit_id])->one();
 $Permohonan = TblPermohonan::find()
 ->where(['statMohon_id' => 2])
 ->andWhere(['status_id' => 1])
+->andWhere(['sok_id' => 1])
 ->all();
 ?>
 
@@ -80,6 +81,12 @@ $Permohonan = TblPermohonan::find()
                 'class' => 'btn btn-primary',
                 'data-toggle'=>'tooltip', 
                 'title'=>'Minit Mesyuarat'
+            ]); ?>
+            <?= Html::a('<span class="glyphicon glyphicon-user" aria-hidden="true"></span>', 
+                ['/user/index'], [
+                'class' => 'btn btn-success',
+                'data-toggle'=>'tooltip', 
+                'title'=>'Pengguna'
             ]); ?>
         </p>
         <hr>

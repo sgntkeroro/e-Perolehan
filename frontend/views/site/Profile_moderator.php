@@ -6,13 +6,34 @@ use yii\web\JsExpression;
 
 $this->title = 'Profile';
 ?>
-<div class="site-index">
 
-    <div class="jumbotron">
+<style type="text/css">
+	.div {
+    width: 800px;
+    height: 400px;
 
-        <p>Selamat Datang ke sistem e-Perolehan. Anda telah mendaftar sebagai moderator. Sila isi butiran diri anda.</p>
-        <p>
-        	<a class="btn btn-lg btn-info" href="http://localhost/e-Perolehan/frontend/web/index.php?r=tbl-moderator%2Fcreate"><span class="glyphicon glyphicon glyphicon-user" aria-hidden="true"></span></a>
-		</p>
+    position: absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    margin: auto;
+}
+</style>
+
+<div class = "panel panel-primary col-lg-8 div">
+    <div class = "panel-body" style = "text-align:center"><br><br>
+    	<h4><b>Selamat Datang ke sistem e-Perolehan.</b><br><br><br>
+    		Anda telah mendaftar sebagai <i><b>moderator</b></i>.<br> 
+    		Sila isi butiran diri anda terlebih dahulu sebelum memulakan akses lain.</h4><br>
+        <?= Html::a('<h3><span class="glyphicon glyphicon-user" aria-hidden="true"></span></h3>', ['/tbl-moderator/create'], [
+            'class' => 'btn btn-primary',
+            'data-toggle'=>'tooltip', 
+            'title'=>'Butiran Diri'
+        ]); ?><br><br>
+        Sekiranya anda bukan <b><i>moderator</i></b>, 
+        sila <b>lengkapkan butiran</b> anda terlebih dahulu dengan menekan butang diatas 
+        kemudian berhubung dengan pihak <b>CSPI</b> untuk menukar <b><i>Role</i></b> anda
     </div>
 </div>

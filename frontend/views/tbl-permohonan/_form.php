@@ -17,6 +17,8 @@ use frontend\models\TblKatpermohonan;
 use frontend\models\TblTahun;
 use frontend\models\TblBukulog;
 use frontend\models\TblDekan;
+use frontend\models\TblKategori;
+use frontend\models\TblSokongan;
 
 /* @var $this yii\web\View */
 /* @var $model frontend\models\TblPermohonan */
@@ -63,6 +65,29 @@ use frontend\models\TblDekan;
     <div class="row">
         <div class="col-sm-4">
             <?= $form->field($model, 'permohonan_pusatKos')->label("Pusat Kos :")->textInput(['maxlength' => true]) ?>
+        </div>
+
+        <div class = "col-lg-4">
+            <?php //$form->field($model, 'kat_id')->label(true)->dropDownList(
+                //ArrayHelper::map(TblKategori::find()->all(),'kat_id','kat_kategori'), ['id' => 'pilih_dulu']
+            //) ?>
+
+            <?= $form->field($model, 'kat_id')->label(true)->dropDownList(
+              ArrayHelper::map(TblKategori::find()->all(),'kat_id','kat_kategori'),
+              ['id' => 'pilih_dulu', 'onchange' => 'if($(this).val() == 1) {
+                                $("#'.Html::getInputId($model, 'sok_id').'").val($(this).val());
+                            }
+                            else if($(this).val() == 2) {
+                                $("#'.Html::getInputId($model, 'sok_id').'").val($(this).val());
+                            }
+                            else if($(this).val() == 3){
+                                $("#'.Html::getInputId($model, 'sok_id').'").val(2);
+                            }
+           ']) ?>
+        </div>
+
+        <div class="col-lg-4">
+            <?= $form->field($model, 'sok_id')->textInput() ?>
         </div>
     </div>
 
@@ -171,25 +196,6 @@ use frontend\models\TblDekan;
 
 </div>
 
-<?php
-// $js = <<<'EOD'
-
-// $(".optionvalue-img").on("filecleared", function(event) {
-//     var regexID = /^(.+?)([-\d-]{1,})(.+)$/i;
-//     var id = event.target.id;
-//     var matches = id.match(regexID);
-//     if (matches && matches.length === 4) {
-//         var identifiers = matches[2].split("-");
-//         $("#optionvalue-" + identifiers[1] + "-deleteimg").val("1");
-//     }
-// });
-
-// EOD;
-
-// JuiAsset::register($this);
-// $this->registerJs($js);
-?>
-
 <script type="text/javascript">
     $(".dynamicform_wrapper").on("beforeInsert", function(e, item) {
         console.log("beforeInsert");
@@ -216,21 +222,19 @@ use frontend\models\TblDekan;
 </script>
 
 <?php
+$script = <<< JS
 
-// $js = <<<'EOD'
+$(document).ready(function () {
+    $(document.body).on('change', '#kat_id', function () {
+        var val = $('#kat_id').val();
+        if(val = 1 ) {
+          $('.1').hide();
+        } else {
+          $('.1').show();
+        }
+    });
+});
 
-// $(".optionvalue-img").on("filecleared", function(event) {
-//     var regexID = /^(.+?)([-\d-]{1,})(.+)$/i;
-//     var id = event.target.id;
-//     var matches = id.match(regexID);
-//     if (matches && matches.length === 4) {
-//         var identifiers = matches[2].split("-");
-//         $("#optionvalue-" + identifiers[1] + "-deleteimg").val("1");
-//     }
-// });
-
-// EOD;
-
-// JuiAsset::register($this);
-// $this->registerJs($js);
+JS;
+$this->registerJs($script);
 ?>

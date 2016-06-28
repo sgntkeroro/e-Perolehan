@@ -28,7 +28,7 @@ use frontend\models\TblUnit;
                 <?= $form->field($model, 'mod_tel')->textInput() ?>
             </div>
             <div class='col-lg-4'>
-                <?= $form->field($model, 'mod_pekerjaNo')->textInput() ?>
+                <?= $form->field($model, 'mod_pekerjaNo')->textInput(['readonly'=>true, 'value' => Yii::$app->user->identity->username]) ?>
             </div>
         </div>
     </div>

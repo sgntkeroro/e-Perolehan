@@ -113,6 +113,14 @@ class TblPeralatan extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getPermohonandua()
+    {
+        return $this->hasOne(Permohonan::className(), ['permohonan_id' => 'permohonan_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getJk()
     {
         return $this->hasOne(TblJk::className(), ['jk_id' => 'jk_id']);

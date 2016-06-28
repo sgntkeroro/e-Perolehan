@@ -55,6 +55,14 @@ class TblStatmohon extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getPermohonandua()
+    {
+        return $this->hasMany(Permohonan::className(), ['statMohon_id' => 'statMohon_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getTblDekansahs()
     {
         return $this->hasMany(TblDekansah::className(), ['statMohon_id' => 'statMohon_id']);

@@ -18,6 +18,7 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 
+use yii\data\ActiveDataProvider;
 use yii\db\Query;
 use yii\db\Command;
 
@@ -65,51 +66,77 @@ class TblMesyuaratpermohonanController extends Controller
      */
     public function actionAnalisa()
     {
-        $sql =  "SELECT 
-                tbl_permohonan.permohonan_id As permohonan_id, 
-                user.id As id, 
-                tbl_moderator.bm_id As bm_id, 
-                tbl_bhgnmod.unit_kampuscawangan As unit_kampuscawangan, 
-                tbl_bahagian.bahagian_nama As bahagian_nama, 
-                tbl_unit.unit_nama As unit_nama
+        // $sql =  "SELECT 
+        //         tbl_permohonan.permohonan_id As permohonan_id, 
+        //         user.id As id, 
+        //         tbl_moderator.bm_id As bm_id, 
+        //         tbl_bhgnmod.unit_kampuscawangan As unit_kampuscawangan, 
+        //         tbl_bahagian.bahagian_nama As bahagian_nama, 
+        //         tbl_unit.unit_nama As unit_nama
 
-                FROM tbl_permohonan
+        //         FROM tbl_permohonan
 
-                INNER JOIN user 
-                ON tbl_permohonan.user_id=user.id
+        //         INNER JOIN user 
+        //         ON tbl_permohonan.user_id=user.id
 
-                INNER JOIN tbl_moderator 
-                ON user.id=tbl_moderator.user_id
+        //         INNER JOIN tbl_moderator 
+        //         ON user.id=tbl_moderator.user_id
 
-                INNER JOIN tbl_bhgnmod 
-                ON tbl_moderator.bm_id=tbl_bhgnmod.bm_id
+        //         INNER JOIN tbl_bhgnmod 
+        //         ON tbl_moderator.bm_id=tbl_bhgnmod.bm_id
 
-                INNER JOIN tbl_bahagian
-                ON tbl_bhgnmod.bahagian_id=tbl_bahagian.bahagian_id
+        //         INNER JOIN tbl_bahagian
+        //         ON tbl_bhgnmod.bahagian_id=tbl_bahagian.bahagian_id
 
-                INNER JOIN tbl_unit 
-                ON tbl_bhgnmod.unit_id=tbl_unit.unit_id";
+        //         INNER JOIN tbl_unit 
+        //         ON tbl_bhgnmod.unit_id=tbl_unit.unit_id";
 
-        $dataProvider = new SqlDataProvider([
-            'sql' => $sql,
-            ]);
+        // $dataProvider = new SqlDataProvider([
+        //     'sql' => $sql,
+        //     ]);
 
-        // // grid filtering conditions
-        // $sql->andFilterWhere([
-        //     'permohonan_id' => $this->permohonan_id,
-        //     'id' => $this->id,
-        //     'bm_id' => $this->bm_id,
+        // return $this->render('analisis', [
+        //     // 'searchModel' => $searchModel,
+        //     'dataProvider' => $dataProvider,
         // ]);
 
-        // $sql->andFilterWhere(['like', 'unit_kampuscawangan', $this->unit_kampuscawangan])
-        //     ->andFilterWhere(['like', 'bahagian_nama', $this->bahagian_nama])
-        //     ->andFilterWhere(['like', 'unit_nama', $this->unit_nama]);
+        // store any $_GET parameters passed for filtering via GridView
+        $params = Yii::$app->request->queryParams;
 
-        // $searchModel = $sql->search();        
-        // $dataProvider = $searchModel->search();
+        // use query builder instead of raw SQL to avoid SQL injection attacks
+        $query = (new Query())
+            ->select([
+                'permohonan_id' => 'tbl_permohonan.permohonan_id',
+                // 'id' => 'user.id',
+                // 'bm_id' => 'tbl_moderator.bm_id',
+                'unit_kampuscawangan' => 'tbl_bhgnmod.unit_kampuscawangan',
+                'bahagian_nama' => 'tbl_bahagian.bahagian_nama',
+                'unit_nama' => 'tbl_unit.unit_nama'
+            ])
+            ->from('tbl_permohonan')
+            ->join('INNER JOIN', 'user', 'tbl_permohonan.user_id=user.id')
+            ->join('INNER JOIN', 'tbl_moderator', 'user.id=tbl_moderator.user_id')
+            ->join('INNER JOIN', 'tbl_bhgnmod', 'tbl_moderator.bm_id=tbl_bhgnmod.bm_id')
+            ->join('INNER JOIN', 'tbl_bahagian', 'tbl_bhgnmod.bahagian_id=tbl_bahagian.bahagian_id')
+            ->join('INNER JOIN', 'tbl_unit', 'tbl_bhgnmod.unit_id=tbl_unit.unit_id');
+
+        // Adds additional WHERE conditions to the existing query but ignores empty operands
+        // $query->andFilterWhere(['like', 'tbl_permohonan.permohonan_id', $params['permohonan_id']])
+        //     // ->andFilterWhere(['like', 'user.id', $params['id']])
+        //     // ->andFilterWhere(['like', 'tbl_moderator.bm_id', $params['bm_id']])
+        //     ->andFilterWhere(['like', 'tbl_bhgnmod.unit_kampuscawangan', $params['unit_kampuscawangan']])
+        //     ->andFilterWhere(['like', 'tbl_bahagian.bahagian_nama', $params['bahagian_nama']])
+        //     ->andFilterWhere(['like', 'tbl_unit.unit_nama', $params['unit_nama']]);
+
+        // if ($permohonan_id = \Yii::$app->request->getQueryParam('tbl_permohonan.permohonan_id'))
+        // $query->andWhere('tbl_permohonan.permohonan_id = :tbl_permohonan.permohonan_id',[':tbl_permohonan.permohonan_id'=>$permohonan_id]);
+
+        // an ActiveDataProvider will accept a Query object instead of raw SQL
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
 
         return $this->render('analisis', [
-            // 'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -474,6 +501,9 @@ class TblMesyuaratpermohonanController extends Controller
      */
     public function actionDelete($id)
     {
+        foreach( $this->findModel($id)->tblMesyuaratperalatans as $c)
+            $c->delete();
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

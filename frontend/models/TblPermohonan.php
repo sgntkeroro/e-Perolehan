@@ -40,9 +40,10 @@ class TblPermohonan extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'permohonan_tarikh', 'statMohon_id', 'status_id'], 'required'],
-            [['user_id', 'statMohon_id', 'dekan_id', 'status_id'], 'integer'],
+            [['user_id', 'permohonan_tarikh', 'statMohon_id', 'status_id', 'sok_id'], 'required'],
+            [['user_id', 'statMohon_id', 'kat_id', 'status_id', 'sok_id'], 'integer'],
             [['permohonan_tarikh'], 'safe'],
+            [['permohonan_komenpnc'], 'string'],
             [['permohonan_pusatKos'], 'string', 'max' => 200],
             // [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => TblStatus::className(), 'targetAttribute' => ['status_id' => 'status_id']],
             // [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_id' => 'id']],
@@ -62,8 +63,10 @@ class TblPermohonan extends \yii\db\ActiveRecord
             'permohonan_tarikh' => 'Tarikh',
             'permohonan_pusatKos' => 'Pusat Kos',
             'statMohon_id' => 'Status Permohonan',
-            'dekan_id' => 'Dekan / PTJ',
+            'kat_id' => 'Kategori Permohonan',
             'status_id' => 'Status',
+            'sok_id' => 'Status Sokongan',
+            'permohonan_komenpnc' => 'Komen',
         ];
     }
 
@@ -118,9 +121,17 @@ class TblPermohonan extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDekan()
+    public function getKategori()
     {
-        return $this->hasOne(TblDekan::className(), ['dekan_id' => 'dekan_id']);
+        return $this->hasOne(TblKategori::className(), ['kat_id' => 'kat_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getSokongan()
+    {
+        return $this->hasOne(TblSokongan::className(), ['sok_id' => 'sok_id']);
     }
 
     /**

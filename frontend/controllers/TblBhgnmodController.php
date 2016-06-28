@@ -104,6 +104,9 @@ class TblBhgnmodController extends Controller
      */
     public function actionDelete($id)
     {
+        foreach( $this->findModel($id)->tblModerators as $c)
+            $c->delete();
+
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);

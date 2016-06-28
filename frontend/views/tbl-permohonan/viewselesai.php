@@ -8,6 +8,7 @@ use yii\helpers\Url;
 /* @var $model frontend\models\TblPermohonan */
 
 $this->title = 'ID : '.$model->permohonan_id;
+$sokong = $model->sokongan;
 $nombor = 1;
 ?>
 
@@ -79,6 +80,8 @@ $nombor = 1;
                         <th>Nama Pemohon</th>
                         <th>Tarikh Permohonan</th>
                         <th>Pusat Kos</th>
+                        <th>Status Sokongan</th>
+                        <th>Komen</th>
                     </thead>
                     <tbody>
                         <tr>
@@ -90,6 +93,8 @@ $nombor = 1;
                             </td>
                             <td><?= $model->permohonan_tarikh ?></td>
                             <td><?= $model->permohonan_pusatKos ?></td>
+                            <td style = "background-color:#FFD700"><?= $sokong->sok_sokongan ?></td>
+                            <td style = "background-color:#FFD700"><?= $model->permohonan_komenpnc ?></td>
                         </tr>
                     </tbody>
                 </table>

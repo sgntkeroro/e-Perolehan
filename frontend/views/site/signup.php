@@ -20,7 +20,7 @@ $this->title = 'Signup';
 
             <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
 
-                <?= $form->field($model, 'username')->textInput(['style' => 'text-align:center']) ?>
+                <?= $form->field($model, 'username')->label('Staff ID')->textInput(['style' => 'text-align:center']) ?>
 
                 <?= $form->field($model, 'email')->textInput(['style' => 'text-align:center']) ?>
 

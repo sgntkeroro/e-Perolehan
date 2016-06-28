@@ -1,22 +1,18 @@
 <?php
-    use yii\helpers\Html;
-    use yii\db\Query;
-    use yii\db\Command;
+use yii\helpers\Html;
+use frontend\models\TblPermohonan;
+use frontend\models\TblModerator;
+use frontend\models\TblBhgnmod;
+use frontend\models\TblBahagian;
+use frontend\models\TblUnit;
 
-    $query = new Query;
-    $query ->select([
-    'tbl_unit.unit_nama as unit'
-    ])
-    ->from('tbl_unit')
-    ->innerJoin('tbl_bhgnmod','tbl_unit.unit_id=tbl_bhgnmod.unit_id')
-    ->innerJoin('tbl_moderator','tbl_bhgnmod.bm_id=tbl_moderator.bm_id')
-    ->where('tbl_unit.unit_id=tbl_bhgnmod.unit_id')
-    ->andWhere('tbl_moderator.user_id= "'.Yii::$app->user->identity->id.'"'); 
+$permohonan = TblPermohonan::find()->where(['permohonan_id' => $model->permohonan_id])->one();
+$moderator = TblModerator::find()->where(['user_id' => $permohonan->user_id])->one();
+$bm = TblBhgnmod::find()->where(['bm_id' => $moderator->bm_id])->one();
+$bhgn = TblBahagian::find()->where(['bahagian_id' => $bm->bahagian_id])->one();
+$unit = TblUnit::find()->where(['unit_id' => $bm->unit_id])->one();
 
-    $command=$query->createCommand();
-    $data=$command->queryAll();
-
-    $nombor = 1;
+$nombor = 1;
 ?>
 
 <style type="text/css">
@@ -54,9 +50,9 @@
 	<font face="arial">
 		PUSAT KOS : <?= $model->permohonan_pusatKos ?><br>
 		FAKULTI / BAHAGIAN / CAWANGAN : 
-			<?php foreach ($data as $bahagian): ?>
-	        	<?= $bahagian['unit'] ?>
-			<?php endforeach; ?>
+			<?= $bhgn->bahagian_nama ?>,
+            <?= $unit->unit_nama ?>,
+            <?= $bm->unit_kampuscawangan ?>.
 	</font>
 </p>
 

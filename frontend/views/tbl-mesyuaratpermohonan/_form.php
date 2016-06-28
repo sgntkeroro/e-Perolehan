@@ -34,7 +34,7 @@ use yii\web\JsExpression;
     }
 </style>
 
-<div class="tbl-permohonan-form">
+<div class = "tbl-permohonan-form">
 
     <?php $form = ActiveForm::begin([
         'options' => [
@@ -53,11 +53,6 @@ use yii\web\JsExpression;
                 ) ?>
             </div>
             <div class="col-sm-4">
-                <?= $form->field($modelsPermohonan, 'status_id')->dropDownList(
-                    ArrayHelper::map(TblStatus::find()->all(),'status_id','status_status')
-                ) ?>
-            </div>
-            <div class="col-sm-4">
                 <?= $form->field($model, 'mesyPerm_tarikh')->widget(DatePicker::classname(), [
                     'options' => ['placeholder' => 'pilih tarikh mesyuarat'],
                     'pluginOptions' => [
@@ -68,6 +63,14 @@ use yii\web\JsExpression;
             </div>
             <div class="col-sm-4">
                 <?= $form->field($model, 'mesyPerm_catitan')->textArea(['rows' => 2]) ?>
+            </div>
+            <div class="col-sm-4" style = "background-color:#FF6A6A">
+                <br><font style = "text-color:black">
+                    Status ini untuk menentukan samaada permohonan ini sudah selesai ataupun belum.
+                </font><br><br>
+                <?= $form->field($modelsPermohonan, 'status_id')->dropDownList(
+                    ArrayHelper::map(TblStatus::find()->all(),'status_id','status_status')
+                ) ?>
             </div>
         </div>
     </div>

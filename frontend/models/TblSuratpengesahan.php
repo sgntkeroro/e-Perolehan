@@ -65,4 +65,12 @@ class TblSuratpengesahan extends \yii\db\ActiveRecord
     {
         return $this->hasOne(TblPermohonan::className(), ['permohonan_id' => 'permohonan_id']);
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPermohonandua()
+    {
+        return $this->hasOne(Permohonan::className(), ['permohonan_id' => 'permohonan_id']);
+    }
 }

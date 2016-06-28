@@ -50,8 +50,8 @@ $nombor = 1;
 		<br>
 		Mesyuarat Permohonan Peruntukan Kumpulan Wang Pendapatan (KY) <?= date(Y) ?> Bagi 
 			<?= $bhgn->bahagian_nama ?>,
-            <?= $unit->unit_nama ?>,
-            <?= $bm->unit_kampuscawangan ?>.
+      <?= $unit->unit_nama ?>,
+      <?= $bm->unit_kampuscawangan ?>.
 	</b></u>
     </font>
 </p>

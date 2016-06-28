@@ -44,7 +44,8 @@ class TblMesyuaratpermohonanSearch extends TblMesyuaratpermohonan
         $query = TblMesyuaratpermohonan::find()
         ->innerjoin ('tbl_permohonan', 'tbl_permohonan.permohonan_id = tbl_mesyuaratpermohonan.permohonan_id')
         ->where (['tbl_permohonan.statMohon_id'=>2])
-        ->andWhere (['tbl_permohonan.status_id'=>1]);
+        ->andWhere (['tbl_permohonan.status_id'=>1])
+        ->andWhere (['tbl_permohonan.sok_id'=>1]);
 
         // add conditions that should always apply here
 

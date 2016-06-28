@@ -23,8 +23,8 @@ class SignupForm extends Model
         return [
             ['username', 'filter', 'filter' => 'trim'],
             ['username', 'required'],
-            ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
-            ['username', 'string', 'min' => 2, 'max' => 255],
+            ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This ID already exist.'],
+            ['username', 'integer'],
 
             ['email', 'filter', 'filter' => 'trim'],
             ['email', 'required'],
